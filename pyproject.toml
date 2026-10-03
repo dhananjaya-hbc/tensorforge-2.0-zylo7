@@ -28,6 +28,14 @@ dev = [
     "pyyaml>=6.0",
     "schemathesis>=3.36",
 ]
+# Transformer training / embedding experiments (local or Kaggle); never in the runtime image.
+train = [
+    "torch>=2.4",
+    "transformers>=4.44",
+    "sentence-transformers>=3.0",
+    "onnx>=1.16",
+    "onnxruntime>=1.19",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
