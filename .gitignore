@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Secrets: the API key only ever lives in the environment
+.env
+*.key
+
+# Local runtime state
+/data/jobs*.db*
+/var/
+
+# Large training artifacts that are rebuilt or downloaded (final bundles are committed explicitly)
+/models/**/checkpoints/
+/models/**/*.safetensors
+/models/**/*.bin
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
