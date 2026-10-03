@@ -23,3 +23,6 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# Experiment outputs (final bundles are copied into models/)
+/runs/
