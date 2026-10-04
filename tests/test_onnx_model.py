@@ -128,3 +128,49 @@ def test_broken_bundle_keeps_health_503(tmp_path):
     pred = Predictor(tmp_path)
     pred._load()
     assert pred.ready is False and "FileNotFoundError" in pred.error
+
+
+def started_client(settings):
+    import time
+    c = TestClient(create_app(settings))
+    c.__enter__()
+    for _ in range(200):
+        if c.get("/health").status_code == 200:
+            break
+        time.sleep(0.02)
+    return c
+
+
+def test_explain_and_model_card(bundle, tmp_path):
+    c = started_client(Settings(api_key=KEY, model_dir=bundle, data_dir=tmp_path, web_dir=tmp_path / "no-site"))
+    try:
+        plain = c.post("/predict", json=ROWS[1], headers={"X-API-Key": KEY}).json()
+        r = c.post("/predict?explain=true", json=ROWS[1], headers={"X-API-Key": KEY})
+        body = r.json()
+        assert r.status_code == 200 and schema_errors("PredictResponse", body) == []
+        assert "".join(s["text"] for s in body["explain"]["segments"]) == ROWS[1]["text"]
+        assert body["explain"]["model_input"].startswith("__chat__")
+        assert {k: v for k, v in body.items() if k != "explain"} == plain  # explain never changes the prediction
+        assert "explain" not in plain
+        card = c.get("/model-card")
+        assert card.status_code == 200 and card.json()["model_version"] == "v-test-onnx"
+        assert c.get("/").status_code == 404 and c.get("/").json()["error"]["code"] == "not_found"  # no site built
+    finally:
+        c.__exit__(None, None, None)
+
+
+def test_website_is_served_without_changing_the_api(bundle, tmp_path):
+    site = tmp_path / "dist"
+    (site / "assets").mkdir(parents=True)
+    (site / "index.html").write_text("<!doctype html><title>Sentinel</title>")
+    (site / "assets" / "app.js").write_text("console.log(1)")
+    c = started_client(Settings(api_key=KEY, model_dir=bundle, data_dir=tmp_path, web_dir=site))
+    try:
+        assert c.get("/").status_code == 200 and "<title>Sentinel" in c.get("/").text
+        assert c.get("/ui/assets/app.js").status_code == 200
+        missing = c.get("/ui/assets/nope.js")
+        assert missing.status_code == 404 and missing.json()["error"]["code"] == "not_found"
+        assert c.get("/totally-unknown").json()["error"]["code"] == "not_found"
+        assert c.post("/predict", json=ROWS[0]).status_code == 401  # website does not open the API
+    finally:
+        c.__exit__(None, None, None)
