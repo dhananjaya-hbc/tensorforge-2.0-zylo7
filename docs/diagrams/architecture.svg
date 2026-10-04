@@ -148,6 +148,6 @@
     <rect x="400" y="748" width="12" height="12" rx="3" fill="#7c3aed"/><text x="418" y="758">Model inference</text>
     <rect x="540" y="748" width="12" height="12" rx="3" fill="#d97706"/><text x="558" y="758">Async jobs &amp; storage</text>
     <rect x="705" y="748" width="12" height="12" rx="3" fill="#c026d3"/><text x="723" y="758">Demo site</text>
-    <text x="1220" y="758" text-anchor="end" fill="#64748b">Image: ghcr.io/dhananjaya-hbc/triage-sentinel:v1.0</text>
+    <text x="1220" y="758" text-anchor="end" fill="#64748b">Image: ghcr.io/dhananjaya-hbc/zylo7-sentinel:v1.0</text>
   </g>
 </svg>
