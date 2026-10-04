@@ -1,0 +1,137 @@
+{
+    "model_version": "v1.0-4dc8b84f",
+    "kind": "onnx_multitask",
+    "created_at": "2026-10-04T10:25:01+00:00",
+    "code_commit": "df4c0d5",
+    "encoder": "sentence-transformers/LaBSE",
+    "epochs": 5,
+    "trained_on": "train + validation (4,800 tickets)",
+    "thresholds": {
+        "secondary": 0.5,
+        "urgent": 0.5
+    },
+    "review_below_confidence": 0.8,
+    "validation_estimate": {
+        "protocol": "same recipe trained on train only, scored on validation",
+        "n": 800,
+        "primary_accuracy": 0.8975,
+        "primary_macro_f1": 0.9003,
+        "urgent_precision": 0.974,
+        "urgent_recall": 0.9375,
+        "urgent_f1": 0.9554,
+        "secondary_precision": 0.9412,
+        "secondary_recall": 0.8,
+        "secondary_f1": 0.8649,
+        "secondary_exact": 0.9788,
+        "ece": 0.0406,
+        "brier": 0.0575,
+        "composite": 0.9098,
+        "epoch": 5,
+        "train_loss": 0.0071,
+        "seconds": 68,
+        "by_language": {
+            "en": {
+                "n": 280,
+                "primary_accuracy": 0.8464,
+                "primary_macro_f1": 0.8318,
+                "urgent_precision": 0.9231,
+                "urgent_recall": 0.8276,
+                "urgent_f1": 0.8727,
+                "secondary_precision": 0.8929,
+                "secondary_recall": 0.6944,
+                "secondary_f1": 0.7812,
+                "secondary_exact": 0.9571,
+                "ece": 0.0625,
+                "brier": 0.0871,
+                "composite": 0.834
+            },
+            "mixed": {
+                "n": 20,
+                "primary_accuracy": 0.95,
+                "primary_macro_f1": 0.9688,
+                "urgent_precision": 1.0,
+                "urgent_recall": 1.0,
+                "urgent_f1": 1.0,
+                "secondary_precision": 0.5,
+                "secondary_recall": 0.5,
+                "secondary_f1": 0.5,
+                "secondary_exact": 0.95,
+                "ece": 0.0536,
+                "brier": 0.0233,
+                "composite": 0.8844
+            },
+            "si": {
+                "n": 160,
+                "primary_accuracy": 0.9187,
+                "primary_macro_f1": 0.8868,
+                "urgent_precision": 1.0,
+                "urgent_recall": 1.0,
+                "urgent_f1": 1.0,
+                "secondary_precision": 1.0,
+                "secondary_recall": 1.0,
+                "secondary_f1": 1.0,
+                "secondary_exact": 1.0,
+                "ece": 0.0489,
+                "brier": 0.0273,
+                "composite": 0.9434
+            },
+            "singlish": {
+                "n": 200,
+                "primary_accuracy": 0.89,
+                "primary_macro_f1": 0.9207,
+                "urgent_precision": 1.0,
+                "urgent_recall": 1.0,
+                "urgent_f1": 1.0,
+                "secondary_precision": 1.0,
+                "secondary_recall": 0.7143,
+                "secondary_f1": 0.8333,
+                "secondary_exact": 0.98,
+                "ece": 0.059,
+                "brier": 0.0601,
+                "composite": 0.927
+            },
+            "ta": {
+                "n": 120,
+                "primary_accuracy": 1.0,
+                "primary_macro_f1": 1.0,
+                "urgent_precision": 1.0,
+                "urgent_recall": 1.0,
+                "urgent_f1": 1.0,
+                "secondary_precision": 1.0,
+                "secondary_recall": 1.0,
+                "secondary_f1": 1.0,
+                "secondary_exact": 1.0,
+                "ece": 0.0762,
+                "brier": 0.0162,
+                "composite": 1.0
+            },
+            "tanglish": {
+                "n": 20,
+                "primary_accuracy": 0.85,
+                "primary_macro_f1": 0.8455,
+                "urgent_precision": 1.0,
+                "urgent_recall": 1.0,
+                "urgent_f1": 1.0,
+                "secondary_precision": 1.0,
+                "secondary_recall": 1.0,
+                "secondary_f1": 1.0,
+                "secondary_exact": 1.0,
+                "ece": 0.1566,
+                "brier": 0.1393,
+                "composite": 0.9227
+            }
+        }
+    },
+    "onnx_parity": {
+        "precision": "fp16_embeddings",
+        "argmax_agreement": 1.0,
+        "max_abs_prob_diff": 4.76837158203125e-07,
+        "fp32_export": {
+            "argmax_agreement": 1.0,
+            "max_abs_prob_diff": 2.384185791015625e-07
+        }
+    },
+    "files": {
+        "model_b.onnx": "4dc8b84f"
+    }
+}
