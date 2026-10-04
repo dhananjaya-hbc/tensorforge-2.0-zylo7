@@ -5,7 +5,7 @@ Each ticket becomes two text views:
 - denoised view: agent turns, quoted history, prompt injections and learned boilerplate removed
 
 The boilerplate ("filler") lexicon is learned from training data: repeated segments whose labels
-are spread across many categories carry no signal (see notebooks/01_eda.ipynb, section 5).
+are spread across many categories carry no signal (see notebooks/01_data_exploration.ipynb, section 5).
 """
 
 import html
