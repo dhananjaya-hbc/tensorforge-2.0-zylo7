@@ -8,6 +8,7 @@ The boilerplate ("filler") lexicon is learned from training data: repeated segme
 are spread across many categories carry no signal (see notebooks/01_eda.ipynb, section 5).
 """
 
+import html
 import math
 import re
 import unicodedata
@@ -47,6 +48,7 @@ PLACE = re.compile(
     r"\b(?:" + "|".join(LATIN_PLACES) + r")\b|(?<!\S)(?:" + "|".join(NATIVE_PLACES) + r")\S*"
 )
 REPEAT = re.compile(r"(.)\1{2,}")
+HTML_TAG = re.compile(r"<\s*/?\s*[a-zA-Z][a-zA-Z0-9]*(?:\s[^<>]{0,200})?/?\s*>")
 SPACE = re.compile(r"\s+")
 
 # Prompt-injection phrases, matched on the normalised token text (lowercase, no punctuation).
@@ -64,9 +66,14 @@ INJECTION = re.compile(
 )
 
 
+def strip_html(text: str) -> str:
+    """Some emails arrive wrapped in markup (<div>...<br>); drop tags and decode entities (&amp; -> &)."""
+    return html.unescape(HTML_TAG.sub(" ", text))
+
+
 def normalize(text: str) -> str:
     """NFC (keeps Sinhala/Tamil combining marks and ZWJ), lowercase, placeholders, punctuation -> space."""
-    text = unicodedata.normalize("NFC", text).lower()
+    text = unicodedata.normalize("NFC", strip_html(text)).lower()
     text = REF.sub(" <ref> ", text)
     text = NUM.sub(" <num> ", text)
     text = PLACE.sub(" <loc> ", text)
