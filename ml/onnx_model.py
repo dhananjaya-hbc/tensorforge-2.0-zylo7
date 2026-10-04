@@ -9,6 +9,7 @@ at any position (the spec requires predictions to be independent of batch neighb
 """
 
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 
@@ -19,7 +20,7 @@ BATCH = 32
 
 
 class OnnxModel:
-    def __init__(self, bundle: Path, threads: int = 0):
+    def __init__(self, bundle: Path, threads: int | None = None):
         import onnxruntime as ort
         from tokenizers import Tokenizer
 
@@ -30,7 +31,10 @@ class OnnxModel:
         self.tok.no_padding()
         self.tok.enable_truncation(max_length=self.meta["max_len"])
         opts = ort.SessionOptions()
-        opts.intra_op_num_threads = threads  # 0 = one thread per core
+        # One thread per call by default: the session is shared by the job worker and live requests, which then
+        # run side by side (2 vCPU = 2 hyperthreads) instead of competing for both, keeping /predict fast while a
+        # job runs. ORT_THREADS=0 lets one call use every core.
+        opts.intra_op_num_threads = int(os.environ.get("ORT_THREADS", "1")) if threads is None else threads
         self.session = ort.InferenceSession(str(bundle / "model_b.onnx"), opts, providers=["CPUExecutionProvider"])
 
     def text(self, row: dict) -> str:
