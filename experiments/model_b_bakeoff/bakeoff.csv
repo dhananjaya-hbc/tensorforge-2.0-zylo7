@@ -1,0 +1,5 @@
+encoder,best_epoch,alone_macro_f1,alone_acc,blend_weight_B,blend_macro_f1,blend_secondary_f1,blend_urgent_f1
+labse,1,0.9186,0.9175,0.4,0.9214,0.6667,0.898
+e5-base,1,0.8527,0.8425,0.4,0.8636,0.6777,0.9481
+xlmr-base,5,0.8458,0.8313,0.5,0.8475,0.7097,0.8588
+e5-small,5,0.81,0.79,0.6,0.8202,0.5586,0.9441
