@@ -54,7 +54,7 @@ export function Logo() {
       <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-brand to-brand-2 text-white shadow-sm shadow-brand/30">
         <ShieldCheck className="size-4.5" />
       </span>
-      <span className="text-[15px] font-semibold tracking-tight">Triage Sentinel</span>
+      <span className="text-[15px] font-semibold tracking-tight">Zylo7 Sentinel</span>
     </a>
   )
 }
