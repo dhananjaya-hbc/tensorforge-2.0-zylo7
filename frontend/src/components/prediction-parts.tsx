@@ -26,8 +26,51 @@ export function CategoryMark({ category, size = "md" }: { category: string; size
   const box = { sm: "size-6 rounded-md", md: "size-9 rounded-lg", lg: "size-12 rounded-xl" }[size]
   const icon = { sm: "size-3.5", md: "size-4.5", lg: "size-6" }[size]
   return (
-    <div className={cn("grid shrink-0 place-items-center border bg-brand-soft text-brand", box)}>
+    <div className={cn("grid shrink-0 place-items-center ring-1 ring-inset", info?.chip, box)}>
       {Icon && <Icon className={icon} />}
+    </div>
+  )
+}
+
+export function CategoryChip({ category, className }: { category: string; className?: string }) {
+  const info = CATEGORY[category]
+  const Icon = info?.icon
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset", info?.chip, className)}>
+      {Icon && <Icon className="size-3.5" />}
+      {info?.label ?? category}
+    </span>
+  )
+}
+
+/** Radial gauge; the small tick marks the 0.80 human-review threshold. */
+export function ConfidenceRing({ value, size = 112 }: { value: number; size?: number }) {
+  const r = 42
+  const c = 2 * Math.PI * r
+  const tone = value >= 0.95 ? "text-ok" : value >= 0.8 ? "text-brand" : "text-review"
+  const a = 0.8 * 2 * Math.PI // angle of the threshold, measured in the rotated SVG frame
+  const big = size >= 100
+  return (
+    <div className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
+      <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden>
+        <circle cx="50" cy="50" r={r} fill="none" strokeWidth="8" className="stroke-muted" />
+        <circle
+          cx="50" cy="50" r={r} fill="none" strokeWidth="8" strokeLinecap="round"
+          className={cn("stroke-current transition-all duration-700", tone)}
+          strokeDasharray={c} strokeDashoffset={c * (1 - value)}
+        />
+        <line
+          x1={50 + (r - 7) * Math.cos(a)} y1={50 + (r - 7) * Math.sin(a)}
+          x2={50 + (r + 7) * Math.cos(a)} y2={50 + (r + 7) * Math.sin(a)}
+          strokeWidth="2" strokeLinecap="round" className="stroke-foreground/50"
+        >
+          <title>review threshold 80%</title>
+        </line>
+      </svg>
+      <div className="absolute text-center leading-none">
+        <div className={cn("tabular font-semibold tracking-tight", big ? "text-2xl" : "text-base")}>{pct(value)}</div>
+        {big && <div className="mt-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">confidence</div>}
+      </div>
     </div>
   )
 }
@@ -96,12 +139,12 @@ export function ConfidenceMeter({ value }: { value: number }) {
   )
 }
 
-const LEGEND: { kind: Segment["kind"]; label: string }[] = [
-  { kind: "signal", label: "Issue the model reads" },
-  { kind: "filler", label: "Boilerplate (ignored)" },
-  { kind: "agent", label: "Agent turn (ignored)" },
-  { kind: "injection", label: "Injection (neutralised)" },
-  { kind: "quoted", label: "Quoted history (ignored)" },
+const LEGEND: { kind: Segment["kind"]; label: string; swatch: string }[] = [
+  { kind: "signal", label: "Read", swatch: "bg-brand-soft border-b-2 border-brand" },
+  { kind: "filler", label: "Boilerplate", swatch: "bg-muted-foreground/25" },
+  { kind: "agent", label: "Agent turn", swatch: "bg-muted-foreground/15" },
+  { kind: "injection", label: "Injection", swatch: "bg-urgent-soft border-b-2 border-urgent" },
+  { kind: "quoted", label: "Quoted history", swatch: "bg-muted-foreground/10" },
 ]
 
 export function Evidence({ segments }: { segments: Segment[] }) {
@@ -116,7 +159,7 @@ export function Evidence({ segments }: { segments: Segment[] }) {
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 border-t pt-3 text-xs text-muted-foreground">
         {LEGEND.filter((l) => present.has(l.kind)).map((l) => (
           <span key={l.kind} className="flex items-center gap-1.5">
-            <span className={`seg-${l.kind} inline-block h-3 w-5 !p-0`} aria-hidden />
+            <span className={cn("inline-block h-3 w-5 rounded-sm", l.swatch)} aria-hidden />
             {l.label}
           </span>
         ))}
