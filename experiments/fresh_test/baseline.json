@@ -1,0 +1,745 @@
+{
+  "tag": "baseline",
+  "model_version": "v1.0-4dc8b84f",
+  "metrics": {
+    "n": 42,
+    "primary_accuracy": 0.9048,
+    "primary_macro_f1": 0.825,
+    "urgent_precision": 0.8889,
+    "urgent_recall": 0.7273,
+    "urgent_f1": 0.8,
+    "secondary_precision": 1.0,
+    "secondary_recall": 0.2,
+    "secondary_f1": 0.3333,
+    "secondary_exact": 0.9048,
+    "ece": 0.0895,
+    "brier": 0.0819,
+    "composite": 0.7192
+  },
+  "by_language": {
+    "en": {
+      "n": 9,
+      "primary_accuracy": 0.8889,
+      "primary_macro_f1": 0.4545,
+      "urgent_precision": 0.6667,
+      "urgent_recall": 1.0,
+      "urgent_f1": 0.8,
+      "secondary_precision": 0.0,
+      "secondary_recall": 0.0,
+      "secondary_f1": 0.0,
+      "secondary_exact": 0.8889,
+      "ece": 0.1041,
+      "brier": 0.0978,
+      "composite": 0.4673
+    },
+    "mixed": {
+      "n": 3,
+      "primary_accuracy": 1.0,
+      "primary_macro_f1": 0.2727,
+      "urgent_precision": 0.0,
+      "urgent_recall": 0.0,
+      "urgent_f1": 0.0,
+      "secondary_precision": 0.0,
+      "secondary_recall": 0.0,
+      "secondary_f1": 0.0,
+      "secondary_exact": 0.6667,
+      "ece": 0.013,
+      "brier": 0.0003,
+      "composite": 0.1364
+    },
+    "si": {
+      "n": 8,
+      "primary_accuracy": 0.875,
+      "primary_macro_f1": 0.4545,
+      "urgent_precision": 1.0,
+      "urgent_recall": 1.0,
+      "urgent_f1": 1.0,
+      "secondary_precision": 1.0,
+      "secondary_recall": 0.5,
+      "secondary_f1": 0.6667,
+      "secondary_exact": 0.875,
+      "ece": 0.1093,
+      "brier": 0.0916,
+      "composite": 0.6606
+    },
+    "singlish": {
+      "n": 8,
+      "primary_accuracy": 0.75,
+      "primary_macro_f1": 0.4848,
+      "urgent_precision": 1.0,
+      "urgent_recall": 0.5,
+      "urgent_f1": 0.6667,
+      "secondary_precision": 0.0,
+      "secondary_recall": 0.0,
+      "secondary_f1": 0.0,
+      "secondary_exact": 0.875,
+      "ece": 0.2277,
+      "brier": 0.2217,
+      "composite": 0.4424
+    },
+    "ta": {
+      "n": 8,
+      "primary_accuracy": 1.0,
+      "primary_macro_f1": 0.6364,
+      "urgent_precision": 1.0,
+      "urgent_recall": 1.0,
+      "urgent_f1": 1.0,
+      "secondary_precision": 0.0,
+      "secondary_recall": 0.0,
+      "secondary_f1": 0.0,
+      "secondary_exact": 1.0,
+      "ece": 0.0036,
+      "brier": 0.0,
+      "composite": 0.6182
+    },
+    "tanglish": {
+      "n": 6,
+      "primary_accuracy": 1.0,
+      "primary_macro_f1": 0.4545,
+      "urgent_precision": 1.0,
+      "urgent_recall": 0.3333,
+      "urgent_f1": 0.5,
+      "secondary_precision": 0.0,
+      "secondary_recall": 0.0,
+      "secondary_f1": 0.0,
+      "secondary_exact": 1.0,
+      "ece": 0.0387,
+      "brier": 0.0089,
+      "composite": 0.3773
+    }
+  },
+  "mistakes": [
+    {
+      "ticket_id": "F-EN-01",
+      "language": "en",
+      "wrong": [
+        "secondary"
+      ],
+      "expected": {
+        "category": "delivery_delay",
+        "secondary": "payment_refund",
+        "urgent": false
+      },
+      "got": {
+        "category": "delivery_delay",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 1.0
+      },
+      "text": "Hi, my lunch order shows delivered but nothing ever came to my door. The rider isn't answe"
+    },
+    {
+      "ticket_id": "F-EN-07",
+      "language": "en",
+      "wrong": [
+        "category"
+      ],
+      "expected": {
+        "category": "spam_irrelevant",
+        "secondary": null,
+        "urgent": false
+      },
+      "got": {
+        "category": "account_promo",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9382
+      },
+      "text": "WIN a FREE iPhone!!! Click my link to claim your prize, limited offer for RideEat users on"
+    },
+    {
+      "ticket_id": "F-EN-08",
+      "language": "en",
+      "wrong": [
+        "urgent"
+      ],
+      "expected": {
+        "category": "safety_conduct",
+        "secondary": null,
+        "urgent": false
+      },
+      "got": {
+        "category": "safety_conduct",
+        "secondary": null,
+        "urgent": true,
+        "confidence": 1.0
+      },
+      "text": "Last month a driver shouted at me during a trip. It is over and I am fine now, I just want"
+    },
+    {
+      "ticket_id": "F-SI-07",
+      "language": "si",
+      "wrong": [
+        "category",
+        "secondary"
+      ],
+      "expected": {
+        "category": "order_missing_wrong",
+        "secondary": "payment_refund",
+        "urgent": false
+      },
+      "got": {
+        "category": "payment_refund",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.8557
+      },
+      "text": "ඇණවුමේ ආවේ අයිතම තුනයි, මම පහකට ගෙව්වා. ඉතුරු දෙක නැහැ, ඒවට සල්ලි ආපසු ඕන."
+    },
+    {
+      "ticket_id": "F-SG-01",
+      "language": "singlish",
+      "wrong": [
+        "urgent"
+      ],
+      "expected": {
+        "category": "delivery_delay",
+        "secondary": null,
+        "urgent": true
+      },
+      "got": {
+        "category": "delivery_delay",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9974
+      },
+      "text": "amma asaneepen innawa, order karapu beheth thama awe na. paya bagayakin beheth ganna ona, "
+    },
+    {
+      "ticket_id": "F-SG-04",
+      "language": "singlish",
+      "wrong": [
+        "category"
+      ],
+      "expected": {
+        "category": "lost_item",
+        "secondary": null,
+        "urgent": false
+      },
+      "got": {
+        "category": "safety_conduct",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9495
+      },
+      "text": "trip eka iwara una passe mage phone eka car eke amathaka una, driver ge number eka denna p"
+    },
+    {
+      "ticket_id": "F-SG-05",
+      "language": "singlish",
+      "wrong": [
+        "secondary"
+      ],
+      "expected": {
+        "category": "order_missing_wrong",
+        "secondary": "payment_refund",
+        "urgent": false
+      },
+      "got": {
+        "category": "order_missing_wrong",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9448
+      },
+      "text": "kema awa eth drink eka na, order eke tibba deyak ewala na. eke salli tika aapahu denna"
+    },
+    {
+      "ticket_id": "F-SG-06",
+      "language": "singlish",
+      "wrong": [
+        "category"
+      ],
+      "expected": {
+        "category": "app_technical",
+        "secondary": null,
+        "urgent": false
+      },
+      "got": {
+        "category": "account_promo",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.932
+      },
+      "text": "login wela passe app eka hang wenawa, booking ekak karanna ba"
+    },
+    {
+      "ticket_id": "F-TG-02",
+      "language": "tanglish",
+      "wrong": [
+        "urgent"
+      ],
+      "expected": {
+        "category": "payment_refund",
+        "secondary": null,
+        "urgent": true
+      },
+      "got": {
+        "category": "payment_refund",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9996
+      },
+      "text": "en card la ippo thodarndhu panam edukkuranga, naan endha booking um pannala, udane niruthu"
+    },
+    {
+      "ticket_id": "F-TG-03",
+      "language": "tanglish",
+      "wrong": [
+        "urgent"
+      ],
+      "expected": {
+        "category": "delivery_delay",
+        "secondary": null,
+        "urgent": true
+      },
+      "got": {
+        "category": "delivery_delay",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.7683
+      },
+      "text": "kolandhaikku paal powder order panninen, innum varala, adutha feed kku onnum illa"
+    },
+    {
+      "ticket_id": "F-MX-01",
+      "language": "mixed",
+      "wrong": [
+        "secondary"
+      ],
+      "expected": {
+        "category": "order_missing_wrong",
+        "secondary": "payment_refund",
+        "urgent": false
+      },
+      "got": {
+        "category": "order_missing_wrong",
+        "secondary": null,
+        "urgent": false,
+        "confidence": 0.9725
+      },
+      "text": "මගේ ඇණවුමේ chicken burger එක නැහැ, fries විතරයි ආවේ. please refund the burger"
+    }
+  ],
+  "predictions": [
+    {
+      "ticket_id": "F-EN-01",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-02",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-03",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-04",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-05",
+      "category": "app_technical",
+      "secondary_category": null,
+      "team": "Tech Support",
+      "is_urgent": false,
+      "confidence": 0.9996,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-06",
+      "category": "general_inquiry",
+      "secondary_category": null,
+      "team": "Front-line Support",
+      "is_urgent": false,
+      "confidence": 0.9993,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-07",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 0.9382,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-EN-08",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-01",
+      "category": "delivery_delay",
+      "secondary_category": "payment_refund",
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 0.9999,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-02",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": true,
+      "confidence": 0.9997,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-03",
+      "category": "lost_item",
+      "secondary_category": null,
+      "team": "Lost & Found",
+      "is_urgent": false,
+      "confidence": 0.9996,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-04",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-05",
+      "category": "food_quality",
+      "secondary_category": null,
+      "team": "Restaurant Quality",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-06",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": true,
+      "confidence": 0.9999,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-07",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": false,
+      "confidence": 0.8557,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SI-08",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 0.982,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-01",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-02",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-03",
+      "category": "lost_item",
+      "secondary_category": null,
+      "team": "Lost & Found",
+      "is_urgent": false,
+      "confidence": 0.9997,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-04",
+      "category": "ride_trip_issue",
+      "secondary_category": null,
+      "team": "Ride Operations",
+      "is_urgent": false,
+      "confidence": 0.9863,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-05",
+      "category": "food_quality",
+      "secondary_category": null,
+      "team": "Restaurant Quality",
+      "is_urgent": false,
+      "confidence": 0.9997,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-06",
+      "category": "app_technical",
+      "secondary_category": null,
+      "team": "Tech Support",
+      "is_urgent": false,
+      "confidence": 0.9998,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-07",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": true,
+      "confidence": 0.986,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TA-08",
+      "category": "general_inquiry",
+      "secondary_category": null,
+      "team": "Front-line Support",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-01",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 0.9974,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-02",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-03",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-04",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": false,
+      "confidence": 0.9495,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-05",
+      "category": "order_missing_wrong",
+      "secondary_category": null,
+      "team": "Food Operations",
+      "is_urgent": false,
+      "confidence": 0.9448,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-06",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 0.932,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-07",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": false,
+      "confidence": 0.9979,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-SG-08",
+      "category": "ride_trip_issue",
+      "secondary_category": null,
+      "team": "Ride Operations",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TG-01",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TG-02",
+      "category": "payment_refund",
+      "secondary_category": null,
+      "team": "Payments & Refunds",
+      "is_urgent": false,
+      "confidence": 0.9996,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TG-03",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 0.7683,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": true
+    },
+    {
+      "ticket_id": "F-TG-04",
+      "category": "account_promo",
+      "secondary_category": null,
+      "team": "Account Services",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TG-05",
+      "category": "food_quality",
+      "secondary_category": null,
+      "team": "Restaurant Quality",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-TG-06",
+      "category": "safety_conduct",
+      "secondary_category": null,
+      "team": "Trust & Safety",
+      "is_urgent": true,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-MX-01",
+      "category": "order_missing_wrong",
+      "secondary_category": null,
+      "team": "Food Operations",
+      "is_urgent": false,
+      "confidence": 0.9725,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-MX-02",
+      "category": "app_technical",
+      "secondary_category": null,
+      "team": "Tech Support",
+      "is_urgent": false,
+      "confidence": 0.9904,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-MX-03",
+      "category": "delivery_delay",
+      "secondary_category": null,
+      "team": "Delivery Operations",
+      "is_urgent": false,
+      "confidence": 1.0,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    },
+    {
+      "ticket_id": "F-MX-04",
+      "category": "general_inquiry",
+      "secondary_category": null,
+      "team": "Front-line Support",
+      "is_urgent": false,
+      "confidence": 0.998,
+      "model_version": "v1.0-4dc8b84f",
+      "needs_human_review": false
+    }
+  ]
+}
