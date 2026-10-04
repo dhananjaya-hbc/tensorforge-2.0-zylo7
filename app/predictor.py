@@ -14,6 +14,7 @@ import threading
 from pathlib import Path
 
 from ml.decide import Thresholds, decide
+from ml.urgency import apply_urgency_net, urgency_reason
 
 log = logging.getLogger("sentinel.predictor")
 CHUNK = 64
@@ -68,7 +69,8 @@ class Predictor:
         """Demo-UI helper: how the preprocessor reads the ticket (segments + the exact model input)."""
         pre = self._model.pre
         row = {"channel": ticket["channel"], "subject": ticket.get("subject") or "", "text": ticket["text"]}
-        return {"segments": pre.explain(row["text"]), "model_input": pre.denoised_view(row)}
+        return {"segments": pre.explain(row["text"]), "model_input": pre.denoised_view(row),
+                "urgency_rule": urgency_reason(row["text"], row["subject"])}
 
     def predict(self, tickets: list[dict]) -> list[dict]:
         """tickets: validated request objects. Returns spec PredictResponse dicts in the same order."""
@@ -76,6 +78,7 @@ class Predictor:
         preds = []
         for i in range(0, len(rows), CHUNK):
             preds.extend(decide(**self._model.predict_proba(rows[i:i + CHUNK]), th=self._thresholds))
+        apply_urgency_net(preds, rows)  # life-critical needs the urgency head missed (see ml/urgency.py)
         for t, p in zip(tickets, preds):
             p["confidence"] = round(min(max(p["confidence"], 0.0), 1.0), 4)
             p["model_version"] = self.version
