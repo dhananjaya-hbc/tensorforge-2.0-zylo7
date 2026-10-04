@@ -30,6 +30,7 @@ class Predictor:
         self._model = None
         self._thresholds = Thresholds()
         self._review_below: float | None = None
+        self.card: dict = {}
 
     def load_in_background(self) -> threading.Thread:
         t = threading.Thread(target=self._load, name="model-loader", daemon=True)
@@ -54,6 +55,7 @@ class Predictor:
             else:
                 raise ValueError(f"unknown model kind {kind!r}")
             self._review_below = card.get("review_below_confidence")
+            self.card = card
             self.version = card["model_version"]
             self.predict([{"channel": "chat", "subject": "", "text": "warm up"}])
             self.ready = True
@@ -61,6 +63,12 @@ class Predictor:
         except Exception as exc:  # keep serving /health (503) instead of crashing the process
             self.error = f"{type(exc).__name__}: {exc}"
             log.exception("model failed to load from %s", self.model_dir)
+
+    def explain(self, ticket: dict) -> dict:
+        """Demo-UI helper: how the preprocessor reads the ticket (segments + the exact model input)."""
+        pre = self._model.pre
+        row = {"channel": ticket["channel"], "subject": ticket.get("subject") or "", "text": ticket["text"]}
+        return {"segments": pre.explain(row["text"]), "model_input": pre.denoised_view(row)}
 
     def predict(self, tickets: list[dict]) -> list[dict]:
         """tickets: validated request objects. Returns spec PredictResponse dicts in the same order."""
