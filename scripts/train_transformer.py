@@ -1,7 +1,7 @@
 """Fine-tune Model B (multilingual encoder + multi-task heads). Runs on CUDA (Kaggle/Colab), Apple MPS or CPU.
 
 Model selection uses train -> validation, because the two splits use different phrasing templates
-(see notebooks/01_eda.ipynb and docs): validation is the honest estimate for unseen phrasings.
+(see notebooks/01_data_exploration.ipynb and docs): validation is the honest estimate for unseen phrasings.
 
 Examples:
   uv run python scripts/train_transformer.py --encoder intfloat/multilingual-e5-small --out runs/e5s
