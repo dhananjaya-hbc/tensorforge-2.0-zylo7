@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 500" width="1260" height="500" font-family="Inter, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>Zylo7 Sentinel prediction pipeline</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12px; fill: #475569; }
+      .stage { font-size: 14px; font-weight: 800; }
+      .file { font-size: 11px; fill: #64748b; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1260" height="500" rx="18" fill="#ffffff"/>
+  <text x="30" y="46" font-size="22" font-weight="800" fill="#0f172a">What happens to one ticket</text>
+  <text x="30" y="70" class="sub">Identical for /predict, /predict/batch and async jobs · tickets are batched only with tickets of the same length (no padding)</text>
+
+  <!-- input -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="210" width="135" height="110" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="25" y="210" width="6" height="110" rx="3" fill="#64748b"/>
+  </g>
+  <text x="43" y="240" class="title">Ticket</text>
+  <text x="43" y="262" class="sub">channel</text>
+  <text x="43" y="280" class="sub">subject</text>
+  <text x="43" y="298" class="sub">text</text>
+
+  <!-- stage 1 -->
+  <rect x="190" y="100" width="270" height="350" rx="14" fill="#f0f9ff" stroke="#7dd3fc"/>
+  <text x="210" y="128" class="stage" fill="#0369a1">1 · Preprocess</text>
+  <text x="210" y="146" class="file">ml/preprocess.py</text>
+  <g filter="url(#shadow)">
+    <rect x="210" y="162" width="230" height="76" rx="10" fill="#ffffff" stroke="#bae6fd"/>
+    <rect x="210" y="258" width="230" height="76" rx="10" fill="#ffffff" stroke="#bae6fd"/>
+    <rect x="210" y="354" width="230" height="76" rx="10" fill="#ffffff" stroke="#bae6fd"/>
+  </g>
+  <text x="226" y="188" class="title">Normalise</text>
+  <text x="226" y="207" class="sub">NFC · strip HTML</text>
+  <text x="226" y="224" class="sub">refs · numbers · places → tokens</text>
+  <text x="226" y="284" class="title">Denoise</text>
+  <text x="226" y="303" class="sub">drop agent turns · quoted history</text>
+  <text x="226" y="320" class="sub">injections · learned boilerplate</text>
+  <text x="226" y="380" class="title">Tokenise</text>
+  <text x="226" y="399" class="sub">LaBSE WordPiece</text>
+  <text x="226" y="416" class="sub">up to 192 tokens</text>
+  <path class="edge" d="M325,238 V256"/>
+  <path class="edge" d="M325,334 V352"/>
+
+  <!-- stage 2 -->
+  <rect x="490" y="100" width="270" height="350" rx="14" fill="#f5f3ff" stroke="#c4b5fd"/>
+  <text x="510" y="128" class="stage" fill="#6d28d9">2 · Model</text>
+  <text x="510" y="146" class="file">ONNX Runtime · CPU</text>
+  <g filter="url(#shadow)">
+    <rect x="510" y="162" width="230" height="86" rx="10" fill="#ffffff" stroke="#ddd6fe"/>
+    <rect x="510" y="278" width="230" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+    <rect x="510" y="332" width="230" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+    <rect x="510" y="386" width="230" height="44" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+  </g>
+  <text x="526" y="188" class="title">LaBSE encoder</text>
+  <text x="526" y="207" class="sub">fine-tuned · 109 languages</text>
+  <text x="526" y="224" class="sub">fp32 layers · fp16 embeddings</text>
+  <text x="526" y="240" class="sub">identical to PyTorch (100 %)</text>
+  <path class="edge" d="M625,248 V276"/>
+  <text x="526" y="305" class="title">Primary</text><text x="600" y="305" class="sub">11-way softmax</text>
+  <text x="526" y="359" class="title">Secondary</text><text x="612" y="359" class="sub">11 sigmoids</text>
+  <text x="526" y="413" class="title">Urgent</text><text x="590" y="413" class="sub">sigmoid</text>
+
+  <!-- stage 3 -->
+  <rect x="790" y="100" width="270" height="350" rx="14" fill="#fffbeb" stroke="#fcd34d"/>
+  <text x="810" y="128" class="stage" fill="#b45309">3 · Decide</text>
+  <text x="810" y="146" class="file">ml/decide.py · ml/urgency.py</text>
+  <g filter="url(#shadow)">
+    <rect x="810" y="162" width="230" height="76" rx="10" fill="#ffffff" stroke="#fde68a"/>
+    <rect x="810" y="258" width="230" height="76" rx="10" fill="#ffffff" stroke="#fde68a"/>
+    <rect x="810" y="354" width="230" height="76" rx="10" fill="#ffffff" stroke="#fde68a"/>
+  </g>
+  <text x="826" y="188" class="title">Thresholds</text>
+  <text x="826" y="207" class="sub">top category · second issue ≥ 0.5</text>
+  <text x="826" y="224" class="sub">urgent ≥ 0.5</text>
+  <text x="826" y="284" class="title">Urgency safety net</text>
+  <text x="826" y="303" class="sub">medical · infant feeding · fraud</text>
+  <text x="826" y="320" class="sub">0 false alarms on 4,800 tickets</text>
+  <text x="826" y="380" class="title">Routing policy</text>
+  <text x="826" y="399" class="sub">team table · spam rules</text>
+  <text x="826" y="416" class="sub">review flag below 0.80</text>
+  <path class="edge" d="M925,238 V256"/>
+  <path class="edge" d="M925,334 V352"/>
+
+  <!-- output -->
+  <g filter="url(#shadow)">
+    <rect x="1090" y="186" width="148" height="158" rx="12" fill="#ecfdf5" stroke="#6ee7b7"/>
+    <rect x="1090" y="186" width="6" height="158" rx="3" fill="#059669"/>
+  </g>
+  <text x="1108" y="214" class="title">Response</text>
+  <text x="1108" y="236" class="sub">category</text>
+  <text x="1108" y="254" class="sub">secondary</text>
+  <text x="1108" y="272" class="sub">team</text>
+  <text x="1108" y="290" class="sub">is_urgent</text>
+  <text x="1108" y="308" class="sub">confidence</text>
+  <text x="1108" y="326" class="sub">needs_human_review</text>
+
+  <!-- stage arrows -->
+  <path class="edge" d="M160,265 H188"/>
+  <path class="edge" d="M460,265 H488"/>
+  <path class="edge" d="M760,265 H788"/>
+  <path class="edge" d="M1060,265 H1088"/>
+
+  <!-- legend -->
+  <g font-size="11.5" fill="#334155">
+    <rect x="30" y="470" width="12" height="12" rx="3" fill="#0369a1"/><text x="48" y="480">Text cleaning</text>
+    <rect x="150" y="470" width="12" height="12" rx="3" fill="#7c3aed"/><text x="168" y="480">Learned model</text>
+    <rect x="275" y="470" width="12" height="12" rx="3" fill="#d97706"/><text x="293" y="480">Decision rules</text>
+    <rect x="395" y="470" width="12" height="12" rx="3" fill="#059669"/><text x="413" y="480">API response (spec format)</text>
+  </g>
+</svg>
