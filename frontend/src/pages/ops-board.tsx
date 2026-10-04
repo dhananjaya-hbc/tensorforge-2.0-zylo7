@@ -10,6 +10,7 @@ import { api, type Prediction, type Ticket } from "@/lib/api"
 import { CATEGORIES } from "@/lib/labels"
 import { cn, pct } from "@/lib/utils"
 import samples from "@/data/samples.json"
+import { PageTitle } from "@/pages/triage"
 
 type StreamTicket = Ticket & { ticket_id: string; language: string; gold: { category: string; is_urgent: boolean } }
 type Routed = { ticket: StreamTicket; pred: Prediction; at: number }
@@ -64,6 +65,7 @@ export default function OpsBoardPage() {
 
   return (
     <div className="space-y-6">
+      <PageTitle title="Ops Board" />
       <div className="flex flex-wrap items-center gap-3">
         <Button onClick={() => setRunning((r) => !r)} disabled={done >= STREAM.length && !running}>
           {running ? <Pause className="size-4" /> : <Play className="size-4" />}
@@ -84,9 +86,9 @@ export default function OpsBoardPage() {
             ))}
           </SelectContent>
         </Select>
-        <p className="text-sm text-muted-foreground">
-          {STREAM.length} multilingual validation tickets, sent to <code className="font-mono text-xs">/predict/batch</code> {BATCH} at a time.
-        </p>
+        <span className="text-sm text-muted-foreground">
+          {STREAM.length} validation tickets · 5 languages · seen in final training, so expect near-perfect scores; try your own in Live Triage
+        </span>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
