@@ -29,15 +29,43 @@ phrasings). The chosen setup is then refit on train + validation and exported to
 **Run (about 1 hour):**
 - **Kaggle:** Settings → Accelerator **GPU T4** and Internet **On**, then *Run All*.
 - **Colab:** Runtime → Change runtime type → **T4 GPU**, then Runtime → *Run all*. Keep the tab open.
+
+**Private repo:** add a read-only GitHub token as a secret named `GITHUB_TOKEN`
+(Colab: 🔑 *Secrets* in the left sidebar, enable *Notebook access* · Kaggle: *Add-ons → Secrets*).
+The token is never printed and is removed from the clone's git config.
 """)
 
 code("""
-import os
+import os, shutil, subprocess
 WORK = "/kaggle/working" if os.path.isdir("/kaggle/working") else "/content"  # Kaggle or Colab
+REPO = "github.com/dhananjaya-hbc/tensorforge-2.0-zylo7.git"
 print("output folder:", WORK)
 !nvidia-smi -L
-!rm -rf {WORK}/repo && git clone --depth 1 https://github.com/dhananjaya-hbc/tensorforge-2.0-zylo7.git {WORK}/repo
-%cd {WORK}/repo
+
+def github_token():
+    try:
+        from google.colab import userdata
+        return userdata.get("GITHUB_TOKEN")
+    except Exception:
+        pass
+    try:
+        from kaggle_secrets import UserSecretsClient
+        return UserSecretsClient().get_secret("GITHUB_TOKEN")
+    except Exception:
+        return os.environ.get("GITHUB_TOKEN")
+
+token = github_token()
+print("GitHub token found:", bool(token))
+shutil.rmtree(f"{WORK}/repo", ignore_errors=True)
+url = f"https://x-access-token:{token}@{REPO}" if token else f"https://{REPO}"
+clone = subprocess.run(["git", "clone", "--depth", "1", url, f"{WORK}/repo"], capture_output=True, text=True,
+                       env={**os.environ, "GIT_TERMINAL_PROMPT": "0"})
+if clone.returncode != 0:
+    msg = clone.stderr.replace(token, "***") if token else clone.stderr
+    raise RuntimeError("git clone failed. If the repo is private, add the GITHUB_TOKEN secret.\\n" + msg)
+os.chdir(f"{WORK}/repo")
+subprocess.run(["git", "remote", "set-url", "origin", f"https://{REPO}"], check=True)  # drop the token
+del token, url
 !pip install -q onnx onnxruntime
 !git log --oneline -1
 
