@@ -13,8 +13,10 @@ mkdir -p models
 rm -f models/bundle.zip
 
 if [[ "$MODEL_URL" == *drive.google.com* ]]; then
+  # Pass the bare file id: works across gdown versions (newer releases removed --fuzzy link parsing).
+  file_id=$(sed -E 's#.*/d/([^/?]+).*#\1#; s#.*[?&]id=([^&]+).*#\1#' <<< "$MODEL_URL")
   docker run --rm -v "$PWD/models:/out" python:3.12-slim \
-    sh -c 'pip install -q gdown && gdown --fuzzy "$0" -O /out/bundle.zip' "$MODEL_URL"
+    sh -c 'pip install -q gdown && gdown "$0" -O /out/bundle.zip' "$file_id"
 else
   curl -fL --retry 5 -o models/bundle.zip "$MODEL_URL"
 fi
