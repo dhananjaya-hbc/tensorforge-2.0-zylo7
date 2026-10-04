@@ -1,0 +1,37 @@
+# Production stack on the cloud VM: API container + Caddy (HTTPS). Run from the repo root:
+#   docker compose -f deploy/compose.prod.yml --env-file .env up -d --build
+# .env (never committed) provides API_KEY and DOMAIN.
+services:
+  api:
+    build:
+      context: ..
+    image: sentinel:latest
+    restart: unless-stopped
+    environment:
+      API_KEY: ${API_KEY:?API_KEY must be set in .env}
+    volumes:
+      - jobs:/app/var # job state survives container restarts (restart -> running jobs marked interrupted)
+    expose:
+      - "8000"
+    logging:
+      driver: json-file
+      options: { max-size: "20m", max-file: "5" }
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [api]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN must be set in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  jobs:
+  caddy_data:
+  caddy_config:
