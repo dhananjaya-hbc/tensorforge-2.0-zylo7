@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 390" width="1260" height="390" font-family="Inter, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>How the Zylo7 Sentinel model was built</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 14px; font-weight: 800; fill: #0f172a; }
+      .sub { font-size: 11.5px; fill: #475569; }
+      .num { font-size: 20px; font-weight: 800; }
+      .phase { font-size: 13px; font-weight: 800; letter-spacing: 0.4px; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1260" height="390" rx="18" fill="#ffffff"/>
+  <text x="30" y="46" font-size="22" font-weight="800" fill="#0f172a">How the model was built</text>
+  <text x="30" y="70" class="sub">Every choice judged on train → validation (different phrasings), never on cross-validation inside train</text>
+
+  <!-- phase frames -->
+  <rect x="20" y="92" width="520" height="270" rx="16" fill="#f0f9ff" stroke="#7dd3fc"/>
+  <text x="40" y="118" class="phase" fill="#0369a1">LEARN · notebooks 01–02 · experiments/</text>
+  <rect x="560" y="92" width="680" height="270" rx="16" fill="#ecfdf5" stroke="#6ee7b7"/>
+  <text x="580" y="118" class="phase" fill="#047857">SHIP · notebook 03 · ONNX · Docker · AWS</text>
+
+  <g filter="url(#shadow)">
+    <rect x="40" y="136" width="150" height="206" rx="12" fill="#ffffff" stroke="#bae6fd"/>
+    <rect x="210" y="136" width="150" height="206" rx="12" fill="#ffffff" stroke="#bae6fd"/>
+    <rect x="380" y="136" width="140" height="206" rx="12" fill="#ffffff" stroke="#bae6fd"/>
+    <rect x="580" y="136" width="150" height="206" rx="12" fill="#ffffff" stroke="#a7f3d0"/>
+    <rect x="750" y="136" width="150" height="206" rx="12" fill="#ffffff" stroke="#a7f3d0"/>
+    <rect x="920" y="136" width="140" height="206" rx="12" fill="#ffffff" stroke="#a7f3d0"/>
+    <rect x="1080" y="136" width="140" height="206" rx="12" fill="#ffffff" stroke="#a7f3d0"/>
+  </g>
+
+  <!-- learn -->
+  <text x="56" y="164" class="title">Explore data</text>
+  <text x="56" y="184" class="sub">boilerplate ≈ 50 %</text>
+  <text x="56" y="201" class="sub">9 secondary pairs</text>
+  <text x="56" y="250" class="num" fill="#b91c1c">0.994</text>
+  <text x="56" y="268" class="sub">cross-validation</text>
+  <text x="56" y="300" class="num" fill="#0369a1">0.584</text>
+  <text x="56" y="318" class="sub">real (train → val)</text>
+
+  <text x="226" y="164" class="title">Baseline</text>
+  <text x="226" y="184" class="sub">TF-IDF char n-grams</text>
+  <text x="226" y="201" class="sub">+ logistic regression</text>
+  <text x="226" y="250" class="num" fill="#0369a1">0.655</text>
+  <text x="226" y="268" class="sub">macro-F1, tuned</text>
+  <text x="226" y="300" class="num" fill="#0369a1">0.776</text>
+  <text x="226" y="318" class="sub">+ embeddings blend</text>
+
+  <text x="396" y="164" class="title">Bake-off</text>
+  <text x="396" y="184" class="sub">4 encoders · T4 GPU</text>
+  <text x="396" y="201" class="sub">multi-task heads</text>
+  <text x="396" y="250" class="num" fill="#0369a1">0.908</text>
+  <text x="396" y="268" class="sub">LaBSE wins</text>
+  <text x="396" y="300" class="num" fill="#0369a1">0.927</text>
+  <text x="396" y="318" class="sub">composite score</text>
+
+  <!-- ship -->
+  <text x="596" y="164" class="title">Final model</text>
+  <text x="596" y="184" class="sub">LaBSE · 5 epochs</text>
+  <text x="596" y="201" class="sub">train + validation</text>
+  <text x="596" y="250" class="num" fill="#047857">0.900</text>
+  <text x="596" y="268" class="sub">recipe check (val)</text>
+  <text x="596" y="300" class="num" fill="#047857">90.5 %</text>
+  <text x="596" y="318" class="sub">fresh unseen tickets</text>
+
+  <text x="766" y="164" class="title">ONNX export</text>
+  <text x="766" y="184" class="sub">fp32 layers</text>
+  <text x="766" y="201" class="sub">fp16 embeddings</text>
+  <text x="766" y="250" class="num" fill="#047857">100 %</text>
+  <text x="766" y="268" class="sub">same as PyTorch</text>
+  <text x="766" y="300" class="num" fill="#047857">1.1 GB</text>
+  <text x="766" y="318" class="sub">from 1.9 GB</text>
+
+  <text x="936" y="164" class="title">Docker image</text>
+  <text x="936" y="184" class="sub">model baked in</text>
+  <text x="936" y="201" class="sub">no internet needed</text>
+  <text x="936" y="250" class="num" fill="#047857">15 s</text>
+  <text x="936" y="268" class="sub">to healthy</text>
+  <text x="936" y="300" class="num" fill="#047857">v1.0</text>
+  <text x="936" y="318" class="sub">on GHCR</text>
+
+  <text x="1096" y="164" class="title">Live server</text>
+  <text x="1096" y="184" class="sub">AWS · Caddy HTTPS</text>
+  <text x="1096" y="201" class="sub">urgency safety net</text>
+  <text x="1096" y="250" class="num" fill="#047857">39/39</text>
+  <text x="1096" y="268" class="sub">contract checks</text>
+  <text x="1096" y="300" class="num" fill="#047857">1.9 min</text>
+  <text x="1096" y="318" class="sub">2,000-ticket job</text>
+
+  <!-- arrows -->
+  <path class="edge" d="M190,239 H208"/>
+  <path class="edge" d="M360,239 H378"/>
+  <path class="edge" d="M520,239 H578"/>
+  <path class="edge" d="M730,239 H748"/>
+  <path class="edge" d="M900,239 H918"/>
+  <path class="edge" d="M1060,239 H1078"/>
+</svg>
