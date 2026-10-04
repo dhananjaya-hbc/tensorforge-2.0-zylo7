@@ -1,4 +1,4 @@
-# Triage Sentinel
+# Zylo7 Sentinel
 
 **Multilingual support-ticket classification and routing for RideEat**: English, Sinhala, Tamil, Singlish and
 Tanglish tickets are classified, prioritised and routed to the right team by a fine-tuned **LaBSE** model served
