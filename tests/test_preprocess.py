@@ -32,6 +32,12 @@ def test_normalize_placeholders_and_noise():
     assert "pleasee " in out + " " and "🙏" in out
 
 
+def test_html_markup_is_stripped_but_emoticons_survive():
+    out = normalize("<div>dear support<br>my food &amp; drink are late</div> <3")
+    assert "div" not in out and "br" not in out.split()
+    assert out == "dear support my food drink are late < <num>"  # "<3" is not a tag, so it is kept
+
+
 def test_speaker_turns_in_all_scripts():
     assert [s for s, _ in split_turns("agent: hi\ncustomer: my bag")] == ["agent", "customer"]
     assert [s for s, _ in split_turns("නිලධාරියා: කියන්න පාරිභෝගිකයා: බෑග් එක")] == ["agent", "customer"]
