@@ -6,7 +6,7 @@
 /* shadcn/ui zinc theme + Sentinel tokens. Status colours are always paired with an icon and a label. */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.985 0.002 286);
+  --background: oklch(0.985 0.003 265);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -21,17 +21,18 @@
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
+  --border: oklch(0.928 0.006 265);
+  --input: oklch(0.9 0.008 265);
   --ring: oklch(0.705 0.015 286.067);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-accent: oklch(0.955 0.004 286);
 
-  --brand: oklch(0.546 0.17 256);
+  --brand: oklch(0.511 0.23 277);
   --brand-foreground: oklch(0.985 0 0);
-  --brand-soft: oklch(0.546 0.17 256 / 10%);
+  --brand-soft: oklch(0.511 0.23 277 / 8%);
+  --brand-2: oklch(0.58 0.22 300);
   --urgent: oklch(0.577 0.21 27);
   --urgent-soft: oklch(0.577 0.21 27 / 10%);
   --review: oklch(0.666 0.157 58);
@@ -39,7 +40,7 @@
   --ok: oklch(0.55 0.14 152);
   --ok-soft: oklch(0.6 0.14 152 / 12%);
 
-  --chart-1: oklch(0.546 0.17 256);
+  --chart-1: oklch(0.511 0.23 277);
   --chart-2: oklch(0.646 0.18 41);
   --chart-3: oklch(0.6 0.118 184.704);
   --chart-4: oklch(0.769 0.165 70);
@@ -70,9 +71,10 @@
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-accent: oklch(0.24 0.006 286);
 
-  --brand: oklch(0.68 0.15 256);
-  --brand-foreground: oklch(0.15 0.02 256);
-  --brand-soft: oklch(0.68 0.15 256 / 16%);
+  --brand: oklch(0.673 0.182 276);
+  --brand-foreground: oklch(0.15 0.02 276);
+  --brand-soft: oklch(0.673 0.182 276 / 16%);
+  --brand-2: oklch(0.72 0.17 300);
   --urgent: oklch(0.7 0.18 25);
   --urgent-soft: oklch(0.7 0.18 25 / 16%);
   --review: oklch(0.8 0.15 75);
@@ -80,7 +82,7 @@
   --ok: oklch(0.72 0.15 152);
   --ok-soft: oklch(0.72 0.15 152 / 14%);
 
-  --chart-1: oklch(0.68 0.15 256);
+  --chart-1: oklch(0.673 0.182 276);
   --chart-2: oklch(0.7 0.17 45);
   --chart-3: oklch(0.7 0.12 184);
   --chart-4: oklch(0.8 0.15 75);
@@ -119,6 +121,7 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-soft: var(--brand-soft);
+  --color-brand-2: var(--brand-2);
   --color-urgent: var(--urgent);
   --color-urgent-soft: var(--urgent-soft);
   --color-review: var(--review);
@@ -142,6 +145,20 @@
   }
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Landing page decoration */
+@layer components {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand to-brand-2 bg-clip-text text-transparent;
+  }
+  .bg-dots {
+    background-image: radial-gradient(color-mix(in oklch, var(--foreground) 9%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .glow {
+    background: radial-gradient(60% 60% at 50% 0%, var(--brand-soft), transparent 70%);
   }
 }
 
