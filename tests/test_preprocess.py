@@ -86,3 +86,34 @@ def test_explain_covers_text_and_tags_segments(pp):
     kinds = {s["kind"] for s in segs}
     assert {"speaker", "agent", "filler", "signal", "injection", "quoted"} <= kinds
     assert any(s["kind"] == "signal" and "charged twice" in s["text"] for s in segs)
+
+
+@pytest.mark.parametrize("text,theme", [
+    ("amma asaneepen innawa, order karapu beheth thama awe na", "medical need"),
+    ("my grandfather can't breathe and his inhaler order has not arrived", "medical need"),
+    ("kolandhaikku paal powder order panninen, innum varala", "infant feeding"),
+    ("අපේ බබාට කිරිපිටි ඇණවුම් කළා, තවම ලැබුණේ නැහැ", "infant feeding"),
+    ("en card la ippo thodarndhu panam edukkuranga", "active fraud"),
+    ("my card is being charged right now for rides I never booked", "active fraud"),
+])
+def test_urgency_net_detects_life_critical_needs(text, theme):
+    from ml.urgency import urgency_reason
+    assert urgency_reason(text) == theme
+
+
+@pytest.mark.parametrize("text", [
+    "my food is late and I am angry, worst service ever",
+    "I was charged twice for one trip yesterday, please refund one",
+    "last month the driver forgot my medicine bag, it was resolved, I am fine now",
+])
+def test_urgency_net_ignores_ordinary_or_past_issues(text):
+    from ml.urgency import urgency_reason
+    assert urgency_reason(text) is None
+
+
+def test_urgency_net_turns_on_but_never_for_spam():
+    from ml.urgency import apply_urgency_net
+    rows = [{"text": "beheth thama awe na", "subject": ""}, {"text": "buy cheap medicine online", "subject": ""}]
+    preds = [{"category": "delivery_delay", "is_urgent": False}, {"category": "spam_irrelevant", "is_urgent": False}]
+    apply_urgency_net(preds, rows)
+    assert preds[0]["is_urgent"] is True and preds[1]["is_urgent"] is False
