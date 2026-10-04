@@ -1,4 +1,4 @@
-# RideEat Triage Sentinel: production image (CPU only, no torch, no internet needed at runtime).
+# Zylo7 Sentinel: production image (CPU only, no torch, no internet needed at runtime).
 #
 # The model bundle must be present in models/active/ before building (scripts/fetch_model.sh downloads it).
 #   docker build -t sentinel .
