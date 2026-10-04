@@ -10,7 +10,8 @@ import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -72,7 +73,10 @@ def create_app(settings: Settings | None = None, predictor: Predictor | None = N
             return errors.validation_failed(issues)
         if not predictor.ready:
             return not_ready()
-        return (await run_in_threadpool(predictor.predict, [body]))[0]
+        pred = (await run_in_threadpool(predictor.predict, [body]))[0]
+        if request.query_params.get("explain") == "true":  # demo UI only; extra field allowed by the schema
+            pred["explain"] = await run_in_threadpool(predictor.explain, body)
+        return pred
 
     @app.post("/predict/batch")
     async def predict_batch(request: Request):
@@ -88,6 +92,23 @@ def create_app(settings: Settings | None = None, predictor: Predictor | None = N
         meta = {"count": len(preds), "model_version": predictor.version,
                 "processing_time_ms": int((time.perf_counter() - t0) * 1000)}
         return {"predictions": preds, "meta": meta}
+
+    @app.get("/model-card")
+    def model_card():
+        """Public, read-only description of the served model (version, training, validation, parity)."""
+        if not predictor.ready:
+            return not_ready()
+        return predictor.card
+
+    # Demo website (React build in frontend/dist): index at "/", assets under "/ui". Only mounted when built,
+    # so the API contract is identical with or without it; unknown paths still get JSON 404s.
+    index = settings.web_dir / "index.html"
+    if index.is_file():
+        app.mount("/ui", StaticFiles(directory=settings.web_dir), name="ui")
+
+        @app.get("/", include_in_schema=False)
+        def website():
+            return FileResponse(index, headers={"Cache-Control": "no-cache"})
 
     @app.exception_handler(StarletteHTTPException)
     async def http_error(_request, exc: StarletteHTTPException):
