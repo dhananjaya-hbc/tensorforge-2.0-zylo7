@@ -1,4 +1,4 @@
-"""Generates notebooks/03_model_b_kaggle.ipynb, the GPU training notebook for Model B.
+"""Generates notebooks/02_encoder_bakeoff.ipynb, the GPU training notebook for Model B.
 
 Works on Kaggle and Google Colab (the output folder is detected automatically):
 - Kaggle: New Notebook -> File -> Import Notebook, Settings -> Accelerator GPU T4 + Internet On, Run All.
@@ -16,7 +16,7 @@ md = lambda s: cells.append(nbf.v4.new_markdown_cell(s.strip()))  # noqa: E731
 code = lambda s: cells.append(nbf.v4.new_code_cell(s.strip()))  # noqa: E731
 
 md("""
-# 03 · Model B: multilingual transformer (Kaggle / Colab GPU)
+# 02 · Encoder bake-off: choosing Model B (Kaggle / Colab GPU)
 
 **Why this model exists.** Validation tickets describe the same issues with *different phrasings* than train
 (only ~20% of their phrases occur in train). Word-matching models (Model A, TF-IDF) reach ~0.65 macro-F1 on
@@ -166,5 +166,5 @@ except ImportError:
 nb = nbf.v4.new_notebook()
 nb["cells"] = cells
 nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
-nbf.write(nb, Path(__file__).resolve().parent.parent / "notebooks" / "03_model_b_kaggle.ipynb")
-print("written notebooks/03_model_b_kaggle.ipynb")
+nbf.write(nb, Path(__file__).resolve().parent.parent / "notebooks" / "02_encoder_bakeoff.ipynb")
+print("written notebooks/02_encoder_bakeoff.ipynb")
