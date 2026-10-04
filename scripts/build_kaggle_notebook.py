@@ -1,7 +1,10 @@
 """Generates notebooks/03_model_b_kaggle.ipynb, the GPU training notebook for Model B.
 
-Run on Kaggle: New Notebook -> File -> Import Notebook (this file), Settings -> Accelerator: GPU T4,
-Internet: On, then Run All. Outputs land in /kaggle/working (results.zip, bundle_b.zip).
+Works on Kaggle and Google Colab (the output folder is detected automatically):
+- Kaggle: New Notebook -> File -> Import Notebook, Settings -> Accelerator GPU T4 + Internet On, Run All.
+  Outputs: /kaggle/working/results.zip and bundle_b.zip (Output panel).
+- Colab: File -> Upload notebook, Runtime -> Change runtime type -> T4 GPU, Runtime -> Run all.
+  Outputs: /content/results.zip and bundle_b.zip (downloaded automatically at the end).
 """
 
 from pathlib import Path
@@ -13,7 +16,7 @@ md = lambda s: cells.append(nbf.v4.new_markdown_cell(s.strip()))  # noqa: E731
 code = lambda s: cells.append(nbf.v4.new_code_cell(s.strip()))  # noqa: E731
 
 md("""
-# 03 · Model B: multilingual transformer (Kaggle GPU)
+# 03 · Model B: multilingual transformer (Kaggle / Colab GPU)
 
 **Why this model exists.** Validation tickets describe the same issues with *different phrasings* than train
 (only ~20% of their phrases occur in train). Word-matching models (Model A, TF-IDF) reach ~0.65 macro-F1 on
@@ -23,13 +26,18 @@ Singlish and Tanglish.
 **Protocol.** Train on `train`, select on `validation` (train → validation is the honest estimate for unseen
 phrasings). The chosen setup is then refit on train + validation and exported to int8 ONNX for CPU serving.
 
-**Run:** Settings → Accelerator **GPU T4** and Internet **On**, then *Run All* (about 1 hour).
+**Run (about 1 hour):**
+- **Kaggle:** Settings → Accelerator **GPU T4** and Internet **On**, then *Run All*.
+- **Colab:** Runtime → Change runtime type → **T4 GPU**, then Runtime → *Run all*. Keep the tab open.
 """)
 
 code("""
+import os
+WORK = "/kaggle/working" if os.path.isdir("/kaggle/working") else "/content"  # Kaggle or Colab
+print("output folder:", WORK)
 !nvidia-smi -L
-!rm -rf /kaggle/working/repo && git clone --depth 1 https://github.com/dhananjaya-hbc/tensorforge-2.0-zylo7.git /kaggle/working/repo
-%cd /kaggle/working/repo
+!rm -rf {WORK}/repo && git clone --depth 1 https://github.com/dhananjaya-hbc/tensorforge-2.0-zylo7.git {WORK}/repo
+%cd {WORK}/repo
 !pip install -q onnx onnxruntime
 !git log --oneline -1
 
@@ -105,7 +113,7 @@ get_ipython().system(f"python scripts/train_transformer.py --encoder {ENCODERS[b
 get_ipython().system("python scripts/export_onnx.py --run runs/final --out bundle_b")
 """)
 
-md("## 5 · Package outputs (download from the Output panel)")
+md("## 5 · Package outputs (Kaggle: Output panel · Colab: downloads start automatically)")
 code("""
 import shutil, glob
 for name in ENCODERS:
@@ -113,9 +121,15 @@ for name in ENCODERS:
     for f in glob.glob(f"runs/{name}/*.json") + glob.glob(f"runs/{name}/*.npz"):
         shutil.copy(f, f"results/{name}/")
 shutil.copy("runs/final/metrics.json", "bundle_b/final_train_metrics.json")
-shutil.make_archive("/kaggle/working/results", "zip", "results")
-shutil.make_archive("/kaggle/working/bundle_b", "zip", "bundle_b")
-!ls -lh /kaggle/working/*.zip
+shutil.make_archive(f"{WORK}/results", "zip", "results")
+shutil.make_archive(f"{WORK}/bundle_b", "zip", "bundle_b")
+!ls -lh {WORK}/*.zip
+try:  # Colab: trigger browser downloads; on Kaggle use the Output panel instead
+    from google.colab import files
+    files.download(f"{WORK}/results.zip")
+    files.download(f"{WORK}/bundle_b.zip")
+except ImportError:
+    print("Kaggle: download results.zip and bundle_b.zip from the Output panel")
 """)
 
 nb = nbf.v4.new_notebook()
