@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Shortcut for the production stack, from the repo root:  deploy/dc ps | deploy/dc logs caddy --tail 30 | deploy/dc up -d
+cd "$(dirname "$0")/.." && exec sudo docker compose -f deploy/compose.prod.yml --env-file .env "$@"
