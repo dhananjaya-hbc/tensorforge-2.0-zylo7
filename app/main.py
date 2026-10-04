@@ -1,4 +1,4 @@
-"""RideEat Triage Sentinel API (contract: specs/tensorforge-phase2-openapi-v2.yaml).
+"""Zylo7 Sentinel API (contract: specs/tensorforge-phase2-openapi-v2.yaml).
 
 Request flow: Gatekeeper (auth -> 415 -> 413) -> route: JSON parse (400) -> validation (422) -> model.
 Run locally: API_KEY=... uv run uvicorn app.main:app --port 8000
@@ -50,7 +50,7 @@ def create_app(settings: Settings | None = None, predictor: Predictor | None = N
         yield
         worker.stop()
 
-    app = FastAPI(title="RideEat Triage Sentinel", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    app = FastAPI(title="Zylo7 Sentinel", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.predictor = predictor
     app.state.store = store
     register_jobs(app, store, predictor, settings.max_job, read_json)
