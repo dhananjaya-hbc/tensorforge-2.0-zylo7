@@ -8,7 +8,7 @@ with ONNX Runtime on CPU. Built for **TensorForge 2.0, Phase 2** by **Team Zylo7
 |---|---|
 | **Live demo** | https://zylo7-sentinel.duckdns.org |
 | **API base URL** | `https://zylo7-sentinel.duckdns.org` (contract: [`specs/tensorforge-phase2-openapi-v2.yaml`](specs/tensorforge-phase2-openapi-v2.yaml)) |
-| **Container image** | `ghcr.io/dhananjaya-hbc/triage-sentinel:v1.0` |
+| **Container image** | `ghcr.io/dhananjaya-hbc/zylo7-sentinel:v1.0` |
 | **Video** | _link added at submission_ |
 | **Report** | _link added at submission_ |
 
@@ -32,7 +32,7 @@ with ONNX Runtime on CPU. Built for **TensorForge 2.0, Phase 2** by **Team Zylo7
 ### Run the published image (recommended)
 
 ```bash
-docker run -p 8000:8000 -e API_KEY=<key> ghcr.io/dhananjaya-hbc/triage-sentinel:v1.0
+docker run -p 8000:8000 -e API_KEY=<key> ghcr.io/dhananjaya-hbc/zylo7-sentinel:v1.0
 ```
 
 The model is inside the image; nothing is downloaded at runtime. `/health` returns `503 loading` for a few seconds,
