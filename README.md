@@ -90,42 +90,11 @@ docker run -p 8000:8000 -e API_KEY=<key> sentinel
 
 ### Async batch job
 
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant A as API
-    participant S as SQLite store
-    participant W as Worker
-    C->>A: POST /batch/jobs (≤ 5,000 tickets, Idempotency-Key)
-    A->>A: validate every ticket (422 if any is invalid)
-    A->>S: insert job (queued)
-    A-->>C: 202 + job_id, Location, Retry-After
-    W->>S: claim next job (running)
-    loop chunks of 16 tickets
-        W->>W: predict
-        W->>S: update processed
-    end
-    W->>S: save results (succeeded, expires in 6 h)
-    C->>A: GET /batch/jobs/{id}
-    A-->>C: status + progress (Retry-After while running)
-    C->>A: GET /batch/jobs/{id}/results?offset&limit
-    A-->>C: predictions in request order (409 before success, 410 after expiry)
-```
+<p align="center"><img src="docs/diagrams/jobs.svg" alt="Async batch job: submit, queue, process, fetch results, with status flow and rules" width="100%"></p>
 
 ### How the model was built
 
-```mermaid
-flowchart TB
-    subgraph learn["Learn (notebooks + experiments/)"]
-        direction LR
-        eda["01 · Data exploration<br/>boilerplate · labels · template trap"] --> base["Model A baseline<br/>TF-IDF + logistic regression"] --> bake["02 · Encoder bake-off<br/>4 encoders · Kaggle / Colab T4"]
-    end
-    subgraph ship["Ship"]
-        direction LR
-        final["03 · Final LaBSE<br/>train + validation · 5 epochs"] --> onnx["ONNX export<br/>fp32 + fp16 embeddings · parity checks"] --> image["Docker image<br/>GHCR v1.0"] --> live["Live server<br/>judge-simulator harness"]
-    end
-    learn --> ship
-```
+<p align="center"><img src="docs/diagrams/model-journey.svg" alt="How the model was built: explore data, baseline, encoder bake-off, final model, ONNX export, Docker image, live server" width="100%"></p>
 
 ---
 
