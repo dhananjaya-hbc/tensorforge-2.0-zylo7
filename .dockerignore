@@ -1,0 +1,18 @@
+# Only app/, ml/, specs/, models/active/ and the dependency files are needed in the image.
+.git
+.venv
+.env
+**/__pycache__
+.pytest_cache
+data/
+docs/
+experiments/
+notebooks/
+runs/
+scripts/
+tests/
+var/
+deploy/
+models/*
+!models/active
+!models/active/**
