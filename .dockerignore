@@ -13,6 +13,8 @@ scripts/
 tests/
 var/
 deploy/
+frontend/node_modules
+frontend/dist
 models/*
 !models/active
 !models/active/**
