@@ -1,7 +1,7 @@
 [project]
 name = "triage-sentinel"
 version = "0.1.0"
-description = "RideEat Triage Sentinel: multilingual support-ticket classification and routing (TensorForge 2.0 Phase 2)"
+description = "Zylo7 Sentinel: multilingual support-ticket classification and routing (TensorForge 2.0 Phase 2)"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 # Runtime dependencies only: this is what ships in the Docker image.
