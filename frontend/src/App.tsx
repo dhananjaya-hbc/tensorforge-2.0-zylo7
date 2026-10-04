@@ -1,31 +1,32 @@
 import { Suspense, lazy, useEffect, useState, type ComponentType } from "react"
-import { FlaskConical, KeyRound, LayoutGrid, Layers, Menu, Monitor, Moon, ScanText, ShieldCheck, Sun } from "lucide-react"
+import { KeyRound, Menu, Moon, ShieldCheck, Sun } from "lucide-react"
 import { Toaster } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ApiKeyDialog } from "@/components/api-key-dialog"
 import { api, getKey, type Health } from "@/lib/api"
 import { useTheme } from "@/lib/theme"
 import { cn } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
 
 // Each page is its own chunk: the charts library only loads when Model Lab is opened.
+const HomePage = lazy(() => import("@/pages/home"))
 const TriagePage = lazy(() => import("@/pages/triage"))
 const OpsBoardPage = lazy(() => import("@/pages/ops-board"))
 const BatchLabPage = lazy(() => import("@/pages/batch-lab"))
 const ModelLabPage = lazy(() => import("@/pages/model-lab"))
 
-type Page = { id: string; label: string; blurb: string; icon: ComponentType<{ className?: string }>; Component: ComponentType }
-
+type Page = { id: string; label: string; Component: ComponentType }
 const PAGES: Page[] = [
-  { id: "triage", label: "Live Triage", blurb: "Classify one ticket and see what the model read", icon: ScanText, Component: TriagePage },
-  { id: "ops", label: "Ops Board", blurb: "Tickets routed to support teams in real time", icon: LayoutGrid, Component: OpsBoardPage },
-  { id: "batch", label: "Batch Lab", blurb: "Run a file of tickets as an async job", icon: Layers, Component: BatchLabPage },
-  { id: "lab", label: "Model Lab", blurb: "How the model was trained, validated and improved", icon: FlaskConical, Component: ModelLabPage },
+  { id: "home", label: "Overview", Component: HomePage },
+  { id: "triage", label: "Live Triage", Component: TriagePage },
+  { id: "ops", label: "Ops Board", Component: OpsBoardPage },
+  { id: "batch", label: "Batch", Component: BatchLabPage },
+  { id: "lab", label: "Model Lab", Component: ModelLabPage },
 ]
 
-const fromHash = () => PAGES.find((p) => `#${p.id}` === window.location.hash)?.id ?? "triage"
+const fromHash = () => PAGES.find((p) => `#${p.id}` === window.location.hash)?.id ?? "home"
 
 function useHealth() {
   const [health, setHealth] = useState<Health | null>(null)
@@ -47,88 +48,32 @@ function useHealth() {
   return { health, down }
 }
 
-function Brand() {
+export function Logo() {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="grid size-8 place-items-center rounded-lg bg-brand text-brand-foreground shadow-sm">
+    <a href="#home" className="flex items-center gap-2">
+      <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-brand to-brand-2 text-white shadow-sm shadow-brand/30">
         <ShieldCheck className="size-4.5" />
-      </div>
-      <div className="leading-tight">
-        <div className="text-sm font-semibold tracking-tight">Triage Sentinel</div>
-        <div className="text-[11px] text-muted-foreground">RideEat Command Center</div>
-      </div>
-    </div>
+      </span>
+      <span className="text-[15px] font-semibold tracking-tight">Triage Sentinel</span>
+    </a>
   )
 }
 
-function ThemeSwitch() {
-  const { theme, setTheme } = useTheme()
-  const options = [
-    { id: "light", icon: Sun, label: "Light" },
-    { id: "dark", icon: Moon, label: "Dark" },
-    { id: "system", icon: Monitor, label: "System" },
-  ] as const
-  return (
-    <div className="flex rounded-lg border bg-background p-0.5" role="radiogroup" aria-label="Theme">
-      {options.map(({ id, icon: Icon, label }) => (
-        <Tooltip key={id}>
-          <TooltipTrigger asChild>
-            <button
-              role="radio"
-              aria-checked={theme === id}
-              aria-label={label}
-              onClick={() => setTheme(id)}
-              className={cn(
-                "grid size-7 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground",
-                theme === id && "bg-muted text-foreground",
-              )}
-            >
-              <Icon className="size-3.5" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>{label}</TooltipContent>
-        </Tooltip>
-      ))}
-    </div>
-  )
-}
-
-function StatusLine({ health, down }: { health: Health | null; down: boolean }) {
+function StatusDot({ health, down }: { health: Health | null; down: boolean }) {
   const ok = health?.status === "ok" && !down
   return (
-    <div className="space-y-1 rounded-lg border bg-background/60 p-3 text-xs">
-      <div className="flex items-center gap-2 font-medium">
-        <span className={cn("relative flex size-2", ok ? "text-ok" : "text-review")}>
-          {ok && <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-50" />}
-          <span className="relative inline-flex size-2 rounded-full bg-current" />
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="hidden items-center gap-2 rounded-full border bg-card px-2.5 py-1 text-xs text-muted-foreground lg:flex">
+          <span className={cn("relative flex size-2", ok ? "text-ok" : "text-review")}>
+            {ok && <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-50" />}
+            <span className="relative inline-flex size-2 rounded-full bg-current" />
+          </span>
+          {down ? "Offline" : ok ? "Live" : "Loading"}
         </span>
-        {down ? "API unreachable" : ok ? "API online" : "Model loading"}
-      </div>
-      <div className="truncate font-mono text-[11px] text-muted-foreground" title={health?.model_version ?? ""}>
-        {health?.model_version ?? "—"}
-      </div>
-    </div>
-  )
-}
-
-function Nav({ page, onNavigate }: { page: string; onNavigate: (id: string) => void }) {
-  return (
-    <nav className="space-y-1">
-      {PAGES.map(({ id, label, icon: Icon }) => (
-        <button
-          key={id}
-          onClick={() => onNavigate(id)}
-          aria-current={page === id ? "page" : undefined}
-          className={cn(
-            "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground",
-            page === id && "bg-sidebar-accent font-medium text-foreground",
-          )}
-        >
-          <Icon className={cn("size-4", page === id && "text-brand")} />
-          {label}
-        </button>
-      ))}
-    </nav>
+      </TooltipTrigger>
+      <TooltipContent className="font-mono text-xs">{health?.model_version ?? "model not loaded"}</TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -138,9 +83,13 @@ export default function App() {
   const [hasKey, setHasKey] = useState(() => Boolean(getKey()))
   const [menuOpen, setMenuOpen] = useState(false)
   const { health, down } = useHealth()
+  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
-    const onHash = () => setPage(fromHash())
+    const onHash = () => {
+      setPage(fromHash())
+      window.scrollTo({ top: 0 })
+    }
     window.addEventListener("hashchange", onHash)
     return () => window.removeEventListener("hashchange", onHash)
   }, [])
@@ -150,64 +99,63 @@ export default function App() {
     return () => window.removeEventListener("sentinel:need-key", open)
   }, [])
 
-  const navigate = (id: string) => {
-    window.location.hash = id
-    setPage(id)
-    setMenuOpen(false)
-  }
   const current = PAGES.find((p) => p.id === page) ?? PAGES[0]
+  const dark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
-  const sidebar = (
-    <div className="flex h-full flex-col gap-6 p-4">
-      <Brand />
-      <Nav page={page} onNavigate={navigate} />
-      <div className="mt-auto space-y-3">
-        <StatusLine health={health} down={down} />
-        <ThemeSwitch />
-      </div>
-    </div>
-  )
+  const links = (vertical: boolean) =>
+    PAGES.map(({ id, label }) => (
+      <a
+        key={id}
+        href={`#${id}`}
+        onClick={() => setMenuOpen(false)}
+        aria-current={page === id ? "page" : undefined}
+        className={cn(
+          "rounded-full px-3.5 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground",
+          vertical && "rounded-lg py-2",
+          page === id && "bg-brand-soft font-medium text-brand",
+        )}
+      >
+        {label}
+      </a>
+    ))
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="min-h-dvh md:grid md:grid-cols-[15rem_1fr]">
-        <aside className="sticky top-0 hidden h-dvh border-r bg-sidebar md:block">{sidebar}</aside>
-        <div className="min-w-0">
-          <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur md:px-8">
+      <div className="min-h-dvh">
+        <header className="sticky top-0 z-30 border-b bg-background/75 backdrop-blur-xl">
+          <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 bg-sidebar p-0">
+              <SheetContent side="left" className="w-64 p-4">
                 <SheetTitle className="sr-only">Navigation</SheetTitle>
-                {sidebar}
+                <Logo />
+                <nav className="mt-6 flex flex-col gap-1">{links(true)}</nav>
               </SheetContent>
             </Sheet>
-            <div className="min-w-0">
-              <h1 className="truncate text-sm font-semibold">{current.label}</h1>
-              <p className="hidden truncate text-xs text-muted-foreground sm:block">{current.blurb}</p>
-            </div>
-            <div className="ml-auto">
-              <Button variant={hasKey ? "outline" : "default"} size="sm" onClick={() => setKeyOpen(true)}>
+            <Logo />
+            <nav className="ml-6 hidden items-center gap-1 md:flex">{links(false)}</nav>
+            <div className="ml-auto flex items-center gap-2">
+              <StatusDot health={health} down={down} />
+              <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={() => setTheme(dark ? "light" : "dark")}>
+                {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+              </Button>
+              <Button variant={hasKey ? "outline" : "default"} size="sm" className="rounded-full" onClick={() => setKeyOpen(true)}>
                 <KeyRound className="size-4" />
-                {hasKey ? (
-                  <span className="flex items-center gap-1.5">
-                    API key <span className="size-1.5 rounded-full bg-ok" aria-label="connected" />
-                  </span>
-                ) : (
-                  "Add API key"
-                )}
+                <span className="hidden sm:inline">{hasKey ? "Key added" : "Add API key"}</span>
+                {hasKey && <span className="size-1.5 rounded-full bg-ok" aria-label="connected" />}
               </Button>
             </div>
-          </header>
-          <main className="mx-auto w-full max-w-[1400px] px-4 py-6 md:px-8 md:py-8">
-            <Suspense fallback={<Skeleton className="h-[60vh] w-full rounded-xl" />}>
-              <current.Component />
-            </Suspense>
-          </main>
-        </div>
+          </div>
+        </header>
+        <main className={cn(page === "home" ? "" : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10")}>
+          <Suspense fallback={<Skeleton className="mx-auto mt-10 h-[60vh] w-full max-w-7xl rounded-2xl" />}>
+            <current.Component />
+          </Suspense>
+        </main>
       </div>
       <ApiKeyDialog open={keyOpen} onOpenChange={setKeyOpen} onChange={setHasKey} />
       <Toaster richColors closeButton position="bottom-right" />
