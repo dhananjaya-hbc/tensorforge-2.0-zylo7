@@ -2397,8 +2397,10 @@ dependencies = [
     { name = "fastapi" },
     { name = "joblib" },
     { name = "numpy" },
+    { name = "onnxruntime" },
     { name = "scikit-learn" },
     { name = "scipy" },
+    { name = "tokenizers" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -2428,8 +2430,10 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "joblib", specifier = ">=1.4" },
     { name = "numpy", specifier = ">=1.26" },
+    { name = "onnxruntime", specifier = ">=1.19" },
     { name = "scikit-learn", specifier = ">=1.5" },
     { name = "scipy", specifier = ">=1.13" },
+    { name = "tokenizers", specifier = ">=0.19" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
 ]
 
