@@ -70,32 +70,7 @@ docker run -p 8000:8000 -e API_KEY=<key> sentinel
 
 ### System
 
-```mermaid
-flowchart LR
-    judges["Judges' evaluation harness"]
-    browser["Browser<br/>Command Center demo"]
-
-    subgraph aws["AWS EC2 · c7i-flex.large · 2 vCPU · 4 GB · ap-south-1"]
-        caddy["Caddy<br/>HTTPS · Let's Encrypt"]
-        subgraph box["Docker container · sentinel (offline, no torch)"]
-            gate["Gatekeeper (ASGI)<br/>auth 401 → 415 → 413"]
-            api["FastAPI routes<br/>JSON 400 → validation 422"]
-            pred["Predictor<br/>preprocess → LaBSE ONNX → decide"]
-            worker["Job worker thread"]
-            store[("SQLite WAL<br/>job store")]
-            site["React site<br/>static build"]
-        end
-    end
-
-    judges -- HTTPS --> caddy
-    browser -- HTTPS --> caddy
-    caddy --> gate --> api
-    api --> pred
-    api -- "submit / poll / results" --> store
-    worker -- "claim job, save results" --> store
-    worker --> pred
-    api -- "/ and /ui/*" --> site
-```
+<p align="center"><img src="docs/diagrams/architecture.svg" alt="Zylo7 Sentinel system architecture: clients, Caddy HTTPS edge, and one Docker container with the gatekeeper, API routes, demo site, async job store and worker, and the predictor" width="100%"></p>
 
 - **One container** serves the API and the demo site. The model, tokenizer and site are baked into the image.
 - **Gatekeeper** runs before any parsing, in the spec's order: auth (401) → content type (415) → size (413), then
@@ -106,31 +81,7 @@ flowchart LR
 
 ### What happens to one ticket
 
-```mermaid
-flowchart TB
-    t(["Ticket · channel · subject · text"])
-
-    subgraph prep["1 · Preprocess (ml/preprocess.py)"]
-        direction LR
-        n["Normalise<br/>NFC · HTML · refs · numbers · places"] --> d["Denoise<br/>agent turns · quoted history<br/>injections · learned boilerplate"] --> k["Tokenise<br/>LaBSE WordPiece · ≤ 192 tokens"]
-    end
-
-    subgraph model["2 · Model (ONNX Runtime, CPU)"]
-        direction LR
-        m["LaBSE encoder<br/>fp32 layers · fp16 embeddings"] --> h1["primary<br/>11-way softmax"]
-        m --> h2["secondary<br/>11 sigmoids"]
-        m --> h3["urgent<br/>sigmoid"]
-    end
-
-    subgraph decide["3 · Decide (ml/decide.py · ml/urgency.py)"]
-        direction LR
-        dec["Thresholds<br/>argmax · 0.5"] --> net["Urgency safety net<br/>medical · infant feeding · fraud"] --> pol["Policy<br/>team table · spam rules<br/>secondary ≠ primary"]
-    end
-
-    out(["Response · category · team · urgency · confidence · review flag"])
-
-    t --> prep --> model --> decide --> out
-```
+<p align="center"><img src="docs/diagrams/pipeline.svg" alt="Prediction pipeline: preprocess, LaBSE model with three heads, decision rules, response" width="100%"></p>
 
 - Tickets in a request are grouped by **identical token length**, so no padding is ever added: a ticket gets the
   exact same answer alone, in a batch, or in a job, at any position.
