@@ -111,26 +111,29 @@ code("""
 rows, best_epoch = [], {}
 for name in ENCODERS:
     hist = json.load(open(f"runs/{name}/metrics.json"))["history"]
-    e = max(hist, key=lambda h: h["primary_macro_f1"])["epoch"]
+    # composite = 0.5 primary macro-F1 + 0.2 secondary F1 + 0.3 urgent F1 (primary alone favours epoch 1,
+    # where the secondary head has not converged yet)
+    e = max(hist, key=lambda h: h["composite"])["epoch"]
     best_epoch[name] = e
     B = dict(np.load(f"runs/{name}/val_probs_e{e}.npz"))
     blends = []
     for w in np.round(np.linspace(0, 1, 11), 1):
         P = {h: w * B[h] + (1 - w) * A[h] for h in A}
         blends.append((w, score(val, decide(**P, th=Thresholds(0.5, 0.5)))))
-    w, s = max(blends, key=lambda x: x[1]["primary_macro_f1"])
+    w, s = max(blends, key=lambda x: x[1]["composite"])
     alone = score(val, decide(**B, th=Thresholds(0.5, 0.5)))
-    rows.append({"encoder": name, "best_epoch": e, "alone_macro_f1": alone["primary_macro_f1"],
-                 "alone_acc": alone["primary_accuracy"], "blend_weight_B": w, "blend_macro_f1": s["primary_macro_f1"],
+    rows.append({"encoder": name, "best_epoch": e, "alone_composite": alone["composite"],
+                 "alone_macro_f1": alone["primary_macro_f1"], "alone_acc": alone["primary_accuracy"],
+                 "blend_weight_B": w, "blend_composite": s["composite"], "blend_macro_f1": s["primary_macro_f1"],
                  "blend_secondary_f1": s["secondary_f1"], "blend_urgent_f1": s["urgent_f1"]})
-table = pd.DataFrame(rows).sort_values("blend_macro_f1", ascending=False)
+table = pd.DataFrame(rows).sort_values("blend_composite", ascending=False)
 table.to_csv("results/bakeoff.csv", index=False)
 table
 """)
 
 md("""
 ## 4 · Final Model B: refit on train + validation, export int8 ONNX
-The best encoder by blended validation macro-F1 is chosen automatically (set `CHOICE` to override).
+The best encoder by blended validation composite score is chosen automatically (set `CHOICE` to override).
 """)
 code("""
 CHOICE = None  # e.g. "e5-base" to override
