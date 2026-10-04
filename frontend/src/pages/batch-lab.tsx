@@ -12,11 +12,12 @@ import { download, predictionsCsv, problems, readTickets, type LabeledTicket } f
 import { CATEGORY, CATEGORIES } from "@/lib/labels"
 import { cn, pct } from "@/lib/utils"
 import samples from "@/data/samples.json"
+import { PageTitle } from "@/pages/triage"
 
 const DEMO: LabeledTicket[] = (samples.stream as (LabeledTicket & { language: string })[]).map(
   ({ language: _language, ...t }) => t,
 )
-const SHOWN = 100
+const PREVIEW = 15
 
 export default function BatchLabPage() {
   const [tickets, setTickets] = useState<LabeledTicket[] | null>(null)
@@ -86,15 +87,12 @@ export default function BatchLabPage() {
 
   return (
     <div className="space-y-6">
+      <PageTitle title="Batch" />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">1 · Load tickets</CardTitle>
-            <CardDescription>
-              CSV, JSONL or JSON with <code className="font-mono text-xs">channel</code>, <code className="font-mono text-xs">text</code> and
-              optional <code className="font-mono text-xs">ticket_id</code>, <code className="font-mono text-xs">subject</code>. Labelled files
-              (<code className="font-mono text-xs">category</code>) also get scored.
-            </CardDescription>
+            <CardTitle className="text-base">Load tickets</CardTitle>
+            <CardDescription>CSV, JSONL or JSON · up to 5,000 tickets · labels optional</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <button
@@ -114,7 +112,7 @@ export default function BatchLabPage() {
             >
               <FileUp className="size-7 text-brand" />
               <span className="text-sm font-medium">Drop a file or click to browse</span>
-              <span className="text-xs text-muted-foreground">Up to 5,000 tickets · processed on the server as an async job</span>
+              <span className="text-xs text-muted-foreground">.csv · .jsonl · .json</span>
             </button>
             <input ref={input} type="file" accept=".csv,.jsonl,.ndjson,.json" className="hidden" onChange={(e) => e.target.files?.[0] && load(e.target.files[0])} />
             <div className="flex items-center gap-3 text-sm">
@@ -130,11 +128,8 @@ export default function BatchLabPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">2 · Run as an async job</CardTitle>
-            <CardDescription>
-              <code className="font-mono text-xs">POST /batch/jobs</code> → poll <code className="font-mono text-xs">GET /batch/jobs/&#123;id&#125;</code> →
-              page through <code className="font-mono text-xs">/results</code>
-            </CardDescription>
+            <CardTitle className="text-base">Run</CardTitle>
+            <CardDescription>Async job: submit → poll → results</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {!tickets ? (
@@ -213,6 +208,8 @@ function JobProgress({ job, startedAt }: { job: JobStatus; startedAt: number }) 
 }
 
 function Results({ preds, tickets }: { preds: Prediction[]; tickets: LabeledTicket[] }) {
+  const [all, setAll] = useState(false)
+  const shown = all ? preds.slice(0, 1000) : preds.slice(0, PREVIEW)
   const byId = new Map(tickets.map((t) => [t.ticket_id, t]))
   const labelled = preds.filter((p) => byId.get(p.ticket_id ?? "")?.gold?.category)
   const correct = labelled.filter((p) => byId.get(p.ticket_id ?? "")!.gold!.category === p.category).length
@@ -256,7 +253,7 @@ function Results({ preds, tickets }: { preds: Prediction[]; tickets: LabeledTick
         <CardHeader>
           <CardTitle className="text-base">Predictions</CardTitle>
           <CardDescription>
-            In request order{preds.length > SHOWN ? `; first ${SHOWN} of ${preds.length.toLocaleString()} shown (download for all)` : ""}.
+            In request order · {shown.length} of {preds.length.toLocaleString()} shown
           </CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
@@ -270,7 +267,7 @@ function Results({ preds, tickets }: { preds: Prediction[]; tickets: LabeledTick
               </TableRow>
             </TableHeader>
             <TableBody>
-              {preds.slice(0, SHOWN).map((p) => {
+              {shown.map((p) => {
                 const gold = byId.get(p.ticket_id ?? "")?.gold?.category
                 return (
                   <TableRow key={p.ticket_id}>
@@ -297,6 +294,11 @@ function Results({ preds, tickets }: { preds: Prediction[]; tickets: LabeledTick
               })}
             </TableBody>
           </Table>
+          {preds.length > PREVIEW && (
+            <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={() => setAll((a) => !a)}>
+              {all ? "Show fewer" : `Show ${Math.min(preds.length, 1000) - PREVIEW} more`}
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>
