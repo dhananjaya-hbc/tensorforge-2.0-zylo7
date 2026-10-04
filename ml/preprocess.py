@@ -202,3 +202,37 @@ class Preprocessor:
 
     def has_injection(self, text: str) -> bool:
         return bool(INJECTION.search(normalize(text)))
+
+    def explain(self, text: str) -> list[dict]:
+        """Split the raw ticket into consecutive pieces that cover the whole text, each tagged with how the
+        denoiser treats it: signal | filler | agent | speaker | injection | quoted | space.
+        Used by the demo UI to show what the model actually reads; it does not affect predictions."""
+        segments: list[dict] = []
+
+        def add(piece: str, kind: str) -> None:
+            if piece:
+                segments.append({"text": piece, "kind": "space" if not piece.strip() else kind})
+
+        tail = QUOTE_TAIL.search(text)
+        main, quoted_tail = (text[:tail.start()], text[tail.start():]) if tail else (text, "")
+        cursor, speaker = 0, ""
+        bounds = [(m.start(), m.end(), "agent" if m.group(1).lower() in AGENT_LABELS else "customer")
+                  for m in SPEAKER.finditer(main)]
+        for start, end, who in [*bounds, (len(main), len(main), "")]:
+            for piece in re.split(r"(?<=[\n.!?।;])", main[cursor:start]):
+                if speaker == "agent":
+                    add(piece, "agent")
+                elif QUOTE_LINE.fullmatch(piece.rstrip("\n")):
+                    add(piece, "quoted")
+                else:
+                    norm = normalize(piece)
+                    if INJECTION.search(norm):
+                        add(piece, "injection")
+                    elif norm and not self.remove_filler(norm):
+                        add(piece, "filler")
+                    else:
+                        add(piece, "signal")
+            add(main[start:end], "speaker")
+            cursor, speaker = end, who
+        add(quoted_tail, "quoted")
+        return segments
