@@ -16,7 +16,7 @@ with ONNX Runtime on CPU. Built for **TensorForge 2.0, Phase 2** by **Team Zylo7
 
 | What | Result | Where it comes from |
 |---|---|---|
-| Category macro-F1 on **unseen phrasings** | **0.908** (accuracy 0.903) | LaBSE trained on train, scored on validation · [`experiments/model_b_bakeoff`](experiments/model_b_bakeoff) |
+| Category macro-F1 on **unseen phrasings** | **0.900** shipped recipe · 0.908 bake-off | LaBSE trained on train, scored on validation · [`experiments/final_model`](experiments/final_model) · [`experiments/model_b_bakeoff`](experiments/model_b_bakeoff) |
 | Hand-written fresh tickets (42, never seen) | **90.5 %** category accuracy · urgent recall **1.00**, urgent F1 **0.957** | [`experiments/fresh_test`](experiments/fresh_test) |
 | Urgency safety net on all 4,800 labelled tickets | precision **1.00**, **0** false alarms | [`experiments/urgency_net`](experiments/urgency_net) |
 | API contract (judge simulator, live server) | **39 / 39** checks | [`scripts/harness.py`](scripts/harness.py) |
