@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 790" width="1260" height="790" font-family="Inter, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>Zylo7 Sentinel system architecture</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .sub { font-size: 12px; fill: #475569; }
+      .mono { font-size: 11.5px; fill: #475569; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; }
+      .frame { font-size: 13px; font-weight: 700; letter-spacing: 0.3px; }
+      .lane { font-size: 10.5px; font-weight: 700; letter-spacing: 1.2px; fill: #64748b; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .label { font-size: 11px; fill: #334155; font-weight: 600; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <!-- canvas -->
+  <rect x="0" y="0" width="1260" height="790" rx="18" fill="#ffffff"/>
+  <text x="40" y="50" font-size="22" font-weight="800" fill="#0f172a">Zylo7 Sentinel · system architecture</text>
+  <text x="40" y="74" class="sub">One container serves the API and the demo site · deployed on AWS behind HTTPS</text>
+
+  <!-- ===================== CLIENTS ===================== -->
+  <text x="40" y="226" class="lane">CLIENTS</text>
+  <g filter="url(#shadow)">
+    <rect x="40" y="240" width="210" height="96" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="40" y="240" width="6" height="96" rx="3" fill="#64748b"/>
+    <text x="60" y="270" class="title">Evaluation harness</text>
+    <text x="60" y="291" class="sub">organisers' automated tests</text>
+    <text x="60" y="314" class="mono">X-API-Key · JSON</text>
+
+    <rect x="40" y="410" width="210" height="96" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="40" y="410" width="6" height="96" rx="3" fill="#64748b"/>
+    <text x="60" y="440" class="title">Web browser</text>
+    <text x="60" y="461" class="sub">Command Center demo</text>
+    <text x="60" y="484" class="mono">React · shadcn/ui</text>
+  </g>
+
+  <!-- ===================== AWS FRAME ===================== -->
+  <rect x="290" y="110" width="935" height="620" rx="16" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="310" y="136" class="frame" fill="#c2410c">AWS EC2 · c7i-flex.large · 2 vCPU · 4 GB RAM · Mumbai (ap-south-1)</text>
+
+  <!-- Caddy -->
+  <text x="310" y="226" class="lane">EDGE</text>
+  <g filter="url(#shadow)">
+    <rect x="310" y="320" width="180" height="110" rx="12" fill="#ecfdf5" stroke="#6ee7b7"/>
+    <rect x="310" y="320" width="6" height="110" rx="3" fill="#059669"/>
+    <text x="330" y="350" class="title">Caddy</text>
+    <text x="330" y="371" class="sub">HTTPS · Let's Encrypt</text>
+    <text x="330" y="392" class="sub">reverse proxy</text>
+    <text x="330" y="413" class="mono">:443 → :8000</text>
+  </g>
+
+  <!-- ===================== DOCKER FRAME ===================== -->
+  <rect x="525" y="160" width="680" height="550" rx="14" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="545" y="186" class="frame" fill="#0369a1">Docker container · zylo7 sentinel · offline · no PyTorch</text>
+
+  <!-- request path lane -->
+  <text x="545" y="216" class="lane">REQUEST PATH</text>
+  <g filter="url(#shadow)">
+    <rect x="545" y="226" width="185" height="96" rx="12" fill="#eef2ff" stroke="#a5b4fc"/>
+    <rect x="545" y="226" width="6" height="96" rx="3" fill="#4f46e5"/>
+    <text x="565" y="255" class="title">Gatekeeper</text>
+    <text x="565" y="276" class="sub">checks before parsing</text>
+    <text x="565" y="300" class="mono">401 → 415 → 413</text>
+
+    <rect x="770" y="226" width="245" height="96" rx="12" fill="#eef2ff" stroke="#a5b4fc"/>
+    <rect x="770" y="226" width="6" height="96" rx="3" fill="#4f46e5"/>
+    <text x="790" y="255" class="title">API routes · FastAPI</text>
+    <text x="790" y="276" class="sub">JSON 400 → validation 422</text>
+    <text x="790" y="300" class="mono">/predict · /batch/jobs</text>
+
+    <rect x="1050" y="226" width="135" height="96" rx="12" fill="#fdf4ff" stroke="#f0abfc"/>
+    <rect x="1050" y="226" width="6" height="96" rx="3" fill="#c026d3"/>
+    <text x="1070" y="255" class="title">Demo site</text>
+    <text x="1070" y="276" class="sub">React build</text>
+    <text x="1070" y="300" class="mono">GET /</text>
+  </g>
+
+  <!-- async jobs lane (left column) -->
+  <text x="545" y="378" class="lane">ASYNC JOBS</text>
+  <g filter="url(#shadow)">
+    <!-- SQLite cylinder -->
+    <path d="M545,404 a92,14 0 0,0 184,0 v74 a92,14 0 0,1 -184,0 z" fill="#fffbeb" stroke="#fcd34d"/>
+    <ellipse cx="637" cy="404" rx="92" ry="14" fill="#fef3c7" stroke="#fcd34d"/>
+    <text x="565" y="440" class="title">SQLite (WAL)</text>
+    <text x="565" y="461" class="sub">jobs · progress · results</text>
+    <text x="565" y="482" class="mono">Docker volume</text>
+
+    <rect x="545" y="540" width="185" height="96" rx="12" fill="#fffbeb" stroke="#fcd34d"/>
+    <rect x="545" y="540" width="6" height="96" rx="3" fill="#d97706"/>
+    <text x="565" y="569" class="title">Job worker</text>
+    <text x="565" y="590" class="sub">background thread</text>
+    <text x="565" y="614" class="mono">chunks of 16</text>
+  </g>
+
+  <!-- predictor (right column) -->
+  <text x="770" y="378" class="lane">INFERENCE</text>
+  <g filter="url(#shadow)">
+    <rect x="770" y="390" width="415" height="300" rx="14" fill="#f5f3ff" stroke="#c4b5fd"/>
+  </g>
+  <text x="790" y="418" class="title">Predictor</text>
+  <text x="868" y="418" class="sub">same code for /predict, batches and jobs</text>
+  <g font-size="12.5">
+    <g filter="url(#shadow)">
+      <rect x="790" y="436" width="375" height="40" rx="9" fill="#ffffff" stroke="#c4b5fd"/>
+      <rect x="790" y="488" width="375" height="40" rx="9" fill="#ffffff" stroke="#c4b5fd"/>
+      <rect x="790" y="540" width="375" height="40" rx="9" fill="#ffffff" stroke="#c4b5fd"/>
+      <rect x="790" y="592" width="375" height="40" rx="9" fill="#ffffff" stroke="#c4b5fd"/>
+      <rect x="790" y="644" width="375" height="36" rx="9" fill="#ede9fe" stroke="#a78bfa"/>
+    </g>
+    <circle cx="810" cy="456" r="10" fill="#7c3aed"/><text x="810" y="460" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">1</text>
+    <text x="830" y="460" font-weight="700" fill="#0f172a">Preprocess</text><text x="925" y="460" fill="#475569">clean · strip filler &amp; injections</text>
+    <circle cx="810" cy="508" r="10" fill="#7c3aed"/><text x="810" y="512" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">2</text>
+    <text x="830" y="512" font-weight="700" fill="#0f172a">LaBSE · ONNX</text><text x="945" y="512" fill="#475569">fine-tuned · 4 heads · CPU</text>
+    <circle cx="810" cy="560" r="10" fill="#7c3aed"/><text x="810" y="564" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">3</text>
+    <text x="830" y="564" font-weight="700" fill="#0f172a">Decide</text><text x="895" y="564" fill="#475569">thresholds · urgency safety net</text>
+    <circle cx="810" cy="612" r="10" fill="#7c3aed"/><text x="810" y="616" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">4</text>
+    <text x="830" y="616" font-weight="700" fill="#0f172a">Policy</text><text x="890" y="616" fill="#475569">team table · spam rules</text>
+    <text x="977" y="667" text-anchor="middle" fill="#5b21b6" font-weight="700">category · team · urgency · confidence · review</text>
+  </g>
+
+  <!-- ===================== ARROWS ===================== -->
+  <path class="edge" d="M250,288 C282,288 280,350 308,358"/>
+  <path class="edge" d="M250,458 C282,458 280,400 308,392"/>
+  <text x="256" y="378" class="label">HTTPS</text>
+  <path class="edge" d="M490,375 H508 V274 H543"/>
+  <path class="edge" d="M730,274 H768"/>
+  <path class="edge" d="M1015,274 H1048"/>
+  <text x="1020" y="262" class="label">/</text>
+  <path class="edge" d="M892,322 V388"/>
+  <text x="900" y="360" class="label">predict · batch</text>
+  <path class="edge" d="M790,322 V352 H700 V388"/>
+  <text x="603" y="346" class="label">submit · poll · results</text>
+  <path class="edge" d="M637,538 V494" marker-start="url(#arrow)"/>
+  <text x="645" y="520" class="label">claim · save</text>
+  <path class="edge" d="M730,588 H768"/>
+  <text x="733" y="578" class="label">run</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <g font-size="11.5" fill="#334155">
+    <rect x="40" y="748" width="12" height="12" rx="3" fill="#64748b"/><text x="58" y="758">Clients</text>
+    <rect x="130" y="748" width="12" height="12" rx="3" fill="#059669"/><text x="148" y="758">Edge (HTTPS)</text>
+    <rect x="255" y="748" width="12" height="12" rx="3" fill="#4f46e5"/><text x="273" y="758">Request handling</text>
+    <rect x="400" y="748" width="12" height="12" rx="3" fill="#7c3aed"/><text x="418" y="758">Model inference</text>
+    <rect x="540" y="748" width="12" height="12" rx="3" fill="#d97706"/><text x="558" y="758">Async jobs &amp; storage</text>
+    <rect x="705" y="748" width="12" height="12" rx="3" fill="#c026d3"/><text x="723" y="758">Demo site</text>
+    <text x="1220" y="758" text-anchor="end" fill="#64748b">Image: ghcr.io/dhananjaya-hbc/triage-sentinel:v1.0</text>
+  </g>
+</svg>
