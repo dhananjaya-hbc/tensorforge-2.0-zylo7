@@ -7,9 +7,9 @@ const STORE = "sentinel.theme"
 function stored(): Theme {
   try {
     const v = localStorage.getItem(STORE)
-    return v === "light" || v === "dark" || v === "system" ? v : "system"
+    return v === "light" || v === "dark" || v === "system" ? v : "light"
   } catch {
-    return "system"
+    return "light"
   }
 }
 
