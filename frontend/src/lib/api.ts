@@ -11,7 +11,7 @@ export type Prediction = {
   confidence: number
   model_version: string
   needs_human_review?: boolean
-  explain?: { segments: Segment[]; model_input: string }
+  explain?: { segments: Segment[]; model_input: string; urgency_rule?: string | null }
 }
 export type JobStatus = {
   job_id: string
