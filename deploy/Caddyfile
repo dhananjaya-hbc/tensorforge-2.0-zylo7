@@ -1,0 +1,25 @@
+# HTTPS front door. Caddy obtains and renews a Let's Encrypt certificate for $DOMAIN automatically.
+{$DOMAIN} {
+	encode gzip
+
+	# The API enforces the spec's own limits (1 / 5 / 25 MB) and answers 413 in JSON. Caddy's cap is
+	# deliberately higher so that, in practice, every 413 comes from the API with the spec's error shape.
+	request_body {
+		max_size 100MB
+	}
+
+	reverse_proxy api:8000 {
+		transport http {
+			read_timeout 300s
+			write_timeout 300s
+		}
+	}
+
+	header -Server
+
+	# Errors raised by Caddy itself (API restarting, body over 100 MB) are still JSON, never HTML.
+	handle_errors {
+		header Content-Type application/json
+		respond `{"error":{"code":"proxy_error","message":"Request could not be completed ({err.status_code})."}}` {err.status_code}
+	}
+}
