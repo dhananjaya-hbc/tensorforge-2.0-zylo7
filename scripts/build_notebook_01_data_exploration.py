@@ -1,4 +1,4 @@
-"""Generates notebooks/01_eda.ipynb. Run: uv run python scripts/build_eda_notebook.py && uv run jupyter nbconvert --to notebook --execute --inplace notebooks/01_eda.ipynb"""
+"""Generates notebooks/01_data_exploration.ipynb. Run: uv run python scripts/build_notebook_01_data_exploration.py && uv run jupyter nbconvert --to notebook --execute --inplace notebooks/01_data_exploration.ipynb"""
 from pathlib import Path
 
 import nbformat as nbf
@@ -9,7 +9,7 @@ md = lambda s: cells.append(nbf.v4.new_markdown_cell(s.strip()))
 code = lambda s: cells.append(nbf.v4.new_code_cell(s.strip()))
 
 md("""
-# 01 · Exploratory data analysis
+# 01 · Data exploration
 
 **Goal:** understand the RideEat ticket data before modelling. Each finding below leads to a concrete design
 decision; these are collected at the end and drive Stages 2–6 of the plan.
@@ -220,5 +220,5 @@ md("""
 
 nb["cells"] = cells
 nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
-nbf.write(nb, Path(__file__).resolve().parent.parent / "notebooks" / "01_eda.ipynb")
+nbf.write(nb, Path(__file__).resolve().parent.parent / "notebooks" / "01_data_exploration.ipynb")
 print("written")
