@@ -26,3 +26,6 @@ __pycache__/
 
 # Experiment outputs (final bundles are copied into models/)
 /runs/
+
+# Per-epoch probability dumps from GPU runs (kept locally; summaries are committed)
+/experiments/**/*.npz
