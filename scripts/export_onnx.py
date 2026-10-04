@@ -40,17 +40,33 @@ def main():
     wrapper = InferenceWrapper(model).eval()
     tok = AutoTokenizer.from_pretrained(run / "tokenizer")
 
+    # Large encoders (LaBSE: ~1.9 GB in fp32) hit protobuf's 2 GB single-file limit, so the fp32 graph and the
+    # quantiser's intermediate files use ONNX external-data format in a scratch folder. The int8 result is
+    # small enough to be re-packed into one self-contained file.
+    import onnx
+
     dummy = tok(["query: hello"], return_tensors="pt")
-    fp32 = out / "model_b.fp32.onnx"
+    scratch = out / "_export_tmp"
+    shutil.rmtree(scratch, ignore_errors=True)
+    scratch.mkdir(parents=True)
+    fp32 = scratch / "fp32.onnx"
     torch.onnx.export(
-        wrapper, (dummy["input_ids"], dummy["attention_mask"]), fp32,
+        wrapper, (dummy["input_ids"], dummy["attention_mask"]), str(fp32),
         input_names=["input_ids", "attention_mask"], output_names=["primary", "secondary", "urgent"],
         dynamic_axes={"input_ids": {0: "batch", 1: "seq"}, "attention_mask": {0: "batch", 1: "seq"},
                       "primary": {0: "batch"}, "secondary": {0: "batch"}, "urgent": {0: "batch"}},
         opset_version=17, dynamo=False,
     )
-    quantize_dynamic(str(fp32), str(out / "model_b.onnx"), weight_type=QuantType.QInt8)
-    fp32.unlink()
+    graph = onnx.load(str(fp32))  # pulls in external tensors if torch wrote any
+    onnx.save_model(graph, str(fp32), save_as_external_data=True, all_tensors_to_one_file=True,
+                    location="fp32.onnx.data", size_threshold=1024)
+    del graph
+    int8 = scratch / "int8.onnx"
+    quantize_dynamic(str(fp32), str(int8), weight_type=QuantType.QInt8, use_external_data_format=True)
+    packed = onnx.load(str(int8))
+    onnx.save_model(packed, str(out / "model_b.onnx"))  # single file (< 2 GB after int8)
+    del packed
+    shutil.rmtree(scratch)
 
     # Parity: int8 ONNX vs PyTorch on the validation set.
     pre = joblib.load(run / "preprocessor.joblib")
