@@ -13,6 +13,7 @@ import { api } from "@/lib/api"
 import { CATEGORY } from "@/lib/labels"
 import { cn, pct } from "@/lib/utils"
 import lab from "@/data/modelLab.json"
+import { PageTitle } from "@/pages/triage"
 
 type Card = {
   model_version?: string
@@ -36,6 +37,7 @@ export default function ModelLabPage() {
 
   return (
     <div className="space-y-8">
+      <PageTitle title="Model Lab" />
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Hero icon={<Gauge className="size-4" />} value={fmt(shipped.macro_f1)} label="macro-F1 on unseen phrasings" hint="trained on train, scored on validation" />
         <Hero icon={<ListChecks className="size-4" />} value={`${lab.harness.checks_passed}/${lab.harness.checks_total}`} label="judge-simulator checks" hint="on the live HTTPS server" />
@@ -54,7 +56,7 @@ export default function ModelLabPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">How the model improved</CardTitle>
-            <CardDescription>Primary-category macro-F1 on the validation set, which uses different phrasings from train.</CardDescription>
+            <CardDescription>Macro-F1 on validation (unseen phrasings)</CardDescription>
           </CardHeader>
           <CardContent>
             <Timeline />
@@ -65,15 +67,12 @@ export default function ModelLabPage() {
             <CardTitle className="flex items-center gap-2 text-base">
               <TriangleAlert className="size-4 text-review" /> The trap we avoided
             </CardTitle>
-            <CardDescription>{lab.trap.explanation}</CardDescription>
+            <CardDescription>Validation uses phrasings train never had</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             <TrapBar label="Cross-validation inside train" value={lab.trap.cv_macro_f1} tone="bg-muted-foreground/50" note="looks perfect: memorised templates" />
             <TrapBar label="Train → validation (honest)" value={lab.trap.validation_macro_f1} tone="bg-urgent" note="same model on new phrasings" />
-            <p className="text-sm text-muted-foreground">
-              So every model choice was made on <span className="font-medium text-foreground">train → validation</span>, never on
-              cross-validation. The hidden test set is expected to use yet another set of phrasings.
-            </p>
+            <p className="text-sm text-muted-foreground">Every choice was made on train → validation.</p>
           </CardContent>
         </Card>
       </section>
@@ -82,10 +81,7 @@ export default function ModelLabPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Encoder bake-off</CardTitle>
-            <CardDescription>
-              Four multilingual encoders fine-tuned with the same multi-task heads on a T4 GPU; best epoch by composite score
-              (0.5 macro-F1 + 0.2 secondary F1 + 0.3 urgent F1).
-            </CardDescription>
+            <CardDescription>4 encoders · same heads · T4 GPU · best epoch by composite</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <BakeoffTable />
@@ -96,7 +92,7 @@ export default function ModelLabPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Per language</CardTitle>
-              <CardDescription>LaBSE, macro-F1 on validation. The API never receives the language.</CardDescription>
+              <CardDescription>Macro-F1 · language is never sent to the API</CardDescription>
             </CardHeader>
             <CardContent>
               <Languages />
@@ -106,9 +102,8 @@ export default function ModelLabPage() {
             <CardHeader>
               <CardTitle className="text-base">Confidence you can trust</CardTitle>
               <CardDescription>
-                Accuracy by confidence band. Below {pct(lab.calibration.review_threshold)} the ticket gets{" "}
-                <code className="font-mono text-xs">needs_human_review</code>: {pct(lab.calibration.review_share, 1)} of tickets, and the
-                auto-routed rest are {pct(lab.calibration.auto_accuracy, 1)} accurate.
+                Below {pct(lab.calibration.review_threshold)} → human review ({pct(lab.calibration.review_share, 1)} of tickets); the rest are{" "}
+                {pct(lab.calibration.auto_accuracy, 1)} accurate
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -122,7 +117,7 @@ export default function ModelLabPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Most common mistakes</CardTitle>
-            <CardDescription>Validation errors cluster in a few phrasings, which the final model trains on.</CardDescription>
+            <CardDescription>Validation, LaBSE</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {lab.confusions.map((c) => (
@@ -140,7 +135,7 @@ export default function ModelLabPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Data</CardTitle>
-            <CardDescription>Synthetic RideEat tickets from the organisers.</CardDescription>
+            <CardDescription>Organiser dataset</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <Row k="Train / validation" v={`${lab.dataset.train.toLocaleString()} / ${lab.dataset.validation.toLocaleString()}`} />
@@ -159,7 +154,7 @@ export default function ModelLabPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Model card (live)</CardTitle>
-            <CardDescription>Served by this deployment at /model-card.</CardDescription>
+            <CardDescription>From /model-card</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <Row k="Version" v={<span className="font-mono text-xs">{card?.model_version ?? "—"}</span>} />
