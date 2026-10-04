@@ -1,0 +1,310 @@
+{
+ "timeline": [
+  {
+   "step": "TF-IDF + logistic regression",
+   "detail": "Model A, default settings",
+   "macro_f1": 0.584
+  },
+  {
+   "step": "Tuned character n-grams",
+   "detail": "Model A, best of 24 variants",
+   "macro_f1": 0.655
+  },
+  {
+   "step": "Frozen multilingual-e5 embeddings",
+   "detail": "no fine-tuning",
+   "macro_f1": 0.715
+  },
+  {
+   "step": "TF-IDF + embeddings blend",
+   "detail": "ensemble",
+   "macro_f1": 0.776
+  },
+  {
+   "step": "Fine-tuned multilingual-e5-small",
+   "detail": "multi-task heads",
+   "macro_f1": 0.81
+  },
+  {
+   "step": "Fine-tuned multilingual-e5-base",
+   "detail": "multi-task heads",
+   "macro_f1": 0.8392
+  },
+  {
+   "step": "Fine-tuned LaBSE (shipped)",
+   "detail": "5 epochs, best composite",
+   "macro_f1": 0.9076
+  }
+ ],
+ "trap": {
+  "cv_macro_f1": 0.9943,
+  "validation_macro_f1": 0.5839,
+  "explanation": "Validation uses different phrasings than train (only ~20% of its phrases occur in train), so cross-validation inside train rewards memorising templates."
+ },
+ "bakeoff": [
+  {
+   "encoder": "LaBSE",
+   "epoch": 5,
+   "macro_f1": 0.9076,
+   "accuracy": 0.9025,
+   "secondary_f1": 0.9333,
+   "urgent_f1": 0.956,
+   "ece": 0.0392,
+   "composite": 0.9273,
+   "curve": [
+    {
+     "epoch": 1,
+     "composite": 0.8538,
+     "macro_f1": 0.9186
+    },
+    {
+     "epoch": 2,
+     "composite": 0.8633,
+     "macro_f1": 0.8473
+    },
+    {
+     "epoch": 3,
+     "composite": 0.9036,
+     "macro_f1": 0.893
+    },
+    {
+     "epoch": 4,
+     "composite": 0.9249,
+     "macro_f1": 0.9086
+    },
+    {
+     "epoch": 5,
+     "composite": 0.9273,
+     "macro_f1": 0.9076
+    }
+   ]
+  },
+  {
+   "encoder": "multilingual-e5-base",
+   "epoch": 5,
+   "macro_f1": 0.8392,
+   "accuracy": 0.835,
+   "secondary_f1": 0.8684,
+   "urgent_f1": 0.9615,
+   "ece": 0.085,
+   "composite": 0.8817,
+   "curve": [
+    {
+     "epoch": 1,
+     "composite": 0.7976,
+     "macro_f1": 0.8527
+    },
+    {
+     "epoch": 2,
+     "composite": 0.8601,
+     "macro_f1": 0.8233
+    },
+    {
+     "epoch": 3,
+     "composite": 0.876,
+     "macro_f1": 0.8367
+    },
+    {
+     "epoch": 4,
+     "composite": 0.8764,
+     "macro_f1": 0.8316
+    },
+    {
+     "epoch": 5,
+     "composite": 0.8817,
+     "macro_f1": 0.8392
+    }
+   ]
+  },
+  {
+   "encoder": "XLM-RoBERTa base",
+   "epoch": 5,
+   "macro_f1": 0.8458,
+   "accuracy": 0.8313,
+   "secondary_f1": 0.8188,
+   "urgent_f1": 0.8555,
+   "ece": 0.1311,
+   "composite": 0.8433,
+   "curve": [
+    {
+     "epoch": 1,
+     "composite": 0.6159,
+     "macro_f1": 0.7111
+    },
+    {
+     "epoch": 2,
+     "composite": 0.7906,
+     "macro_f1": 0.7936
+    },
+    {
+     "epoch": 3,
+     "composite": 0.8097,
+     "macro_f1": 0.8047
+    },
+    {
+     "epoch": 4,
+     "composite": 0.8346,
+     "macro_f1": 0.8359
+    },
+    {
+     "epoch": 5,
+     "composite": 0.8433,
+     "macro_f1": 0.8458
+    }
+   ]
+  },
+  {
+   "encoder": "multilingual-e5-small",
+   "epoch": 5,
+   "macro_f1": 0.81,
+   "accuracy": 0.79,
+   "secondary_f1": 0.3238,
+   "urgent_f1": 0.9167,
+   "ece": 0.0931,
+   "composite": 0.7448,
+   "curve": [
+    {
+     "epoch": 1,
+     "composite": 0.5903,
+     "macro_f1": 0.7082
+    },
+    {
+     "epoch": 2,
+     "composite": 0.661,
+     "macro_f1": 0.7829
+    },
+    {
+     "epoch": 3,
+     "composite": 0.6932,
+     "macro_f1": 0.7977
+    },
+    {
+     "epoch": 4,
+     "composite": 0.7294,
+     "macro_f1": 0.8037
+    },
+    {
+     "epoch": 5,
+     "composite": 0.7448,
+     "macro_f1": 0.81
+    }
+   ]
+  }
+ ],
+ "by_language": [
+  {
+   "language": "English",
+   "macro_f1": 0.8643,
+   "accuracy": 0.875,
+   "n": 280
+  },
+  {
+   "language": "Mixed",
+   "macro_f1": 1.0,
+   "accuracy": 1.0,
+   "n": 20
+  },
+  {
+   "language": "Sinhala",
+   "macro_f1": 0.8868,
+   "accuracy": 0.9187,
+   "n": 160
+  },
+  {
+   "language": "Singlish",
+   "macro_f1": 0.9132,
+   "accuracy": 0.885,
+   "n": 200
+  },
+  {
+   "language": "Tamil",
+   "macro_f1": 0.9761,
+   "accuracy": 0.975,
+   "n": 120
+  },
+  {
+   "language": "Tanglish",
+   "macro_f1": 0.7424,
+   "accuracy": 0.8,
+   "n": 20
+  }
+ ],
+ "calibration": {
+  "bins": [
+   {
+    "band": "< 0.60",
+    "tickets": 39,
+    "accuracy": 0.436
+   },
+   {
+    "band": "0.60–0.80",
+    "tickets": 53,
+    "accuracy": 0.642
+   },
+   {
+    "band": "0.80–0.95",
+    "tickets": 104,
+    "accuracy": 0.673
+   },
+   {
+    "band": "≥ 0.95",
+    "tickets": 604,
+    "accuracy": 0.995
+   }
+  ],
+  "review_threshold": 0.8,
+  "review_share": 0.115,
+  "auto_accuracy": 0.948
+ },
+ "confusions": [
+  {
+   "gold": "delivery_delay",
+   "predicted": "order_missing_wrong",
+   "count": 24
+  },
+  {
+   "gold": "app_technical",
+   "predicted": "order_missing_wrong",
+   "count": 13
+  },
+  {
+   "gold": "ride_trip_issue",
+   "predicted": "general_inquiry",
+   "count": 5
+  },
+  {
+   "gold": "ride_trip_issue",
+   "predicted": "safety_conduct",
+   "count": 4
+  },
+  {
+   "gold": "order_missing_wrong",
+   "predicted": "food_quality",
+   "count": 3
+  }
+ ],
+ "dataset": {
+  "train": 4000,
+  "validation": 800,
+  "categories": 11,
+  "languages": {
+   "English": 1400,
+   "Singlish": 1000,
+   "Sinhala": 800,
+   "Tamil": 600,
+   "Mixed": 100,
+   "Tanglish": 100
+  },
+  "secondary_share": 0.1,
+  "urgent_share": 0.1
+ },
+ "harness": {
+  "checks_passed": 39,
+  "checks_total": 39,
+  "job_tickets": 2000,
+  "job_minutes": 1.9,
+  "submit_seconds": 0.8,
+  "health_server_p95_s": 0.03,
+  "predict_server_p95_s": 0.14
+ }
+}
