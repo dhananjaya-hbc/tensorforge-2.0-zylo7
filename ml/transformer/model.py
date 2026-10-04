@@ -21,9 +21,11 @@ def mean_pool(hidden: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
 
 
 class MultiTaskClassifier(nn.Module):
-    def __init__(self, encoder_name: str, dropout: float = 0.1):
+    def __init__(self, encoder_name: str, dropout: float = 0.1, attn_implementation: str | None = None):
         super().__init__()
-        self.encoder = AutoModel.from_pretrained(encoder_name)
+        # Export uses attn_implementation="eager": its padding-mask arithmetic traces into ONNX reliably.
+        kwargs = {"attn_implementation": attn_implementation} if attn_implementation else {}
+        self.encoder = AutoModel.from_pretrained(encoder_name, **kwargs)
         h = self.encoder.config.hidden_size
         self.dropout = nn.Dropout(dropout)
         self.primary = nn.Linear(h, len(CATEGORIES))
