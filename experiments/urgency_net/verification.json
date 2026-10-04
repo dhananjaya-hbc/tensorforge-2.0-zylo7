@@ -1,0 +1,39 @@
+{
+  "tickets": 4800,
+  "urgent_tickets": 480,
+  "urgent_covered_by_rule": 222,
+  "false_alarms_total": 0,
+  "urgent_tickets_with_past_marker": 0,
+  "themes": {
+    "medical need": {
+      "fires": 100,
+      "labelled_urgent": 100,
+      "false_alarms": 0,
+      "precision": 1.0,
+      "by_category": {
+        "order_missing_wrong": 16,
+        "ride_trip_issue": 45,
+        "lost_item": 16,
+        "delivery_delay": 23
+      }
+    },
+    "infant feeding": {
+      "fires": 61,
+      "labelled_urgent": 61,
+      "false_alarms": 0,
+      "precision": 1.0,
+      "by_category": {
+        "delivery_delay": 61
+      }
+    },
+    "active fraud": {
+      "fires": 61,
+      "labelled_urgent": 61,
+      "false_alarms": 0,
+      "precision": 1.0,
+      "by_category": {
+        "payment_refund": 61
+      }
+    }
+  }
+}
