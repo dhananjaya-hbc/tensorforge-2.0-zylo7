@@ -4,6 +4,15 @@
 #   docker build -t sentinel .
 #   docker run -p 8000:8000 -e API_KEY=<key> sentinel
 
+# ---------- web stage: build the React demo site (only its static output reaches the final image) ----------
+FROM node:24-slim AS web
+RUN npm install -g pnpm@12.4.2
+WORKDIR /web
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY frontend/ ./
+RUN pnpm build
+
 # ---------- build stage: resolve runtime dependencies from the lockfile ----------
 FROM python:3.12-slim AS build
 COPY --from=ghcr.io/astral-sh/uv:0.8 /uv /usr/local/bin/uv
@@ -20,6 +29,7 @@ ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     MODEL_DIR=/app/models/active \
+    WEB_DIR=/app/web \
     DATA_DIR=/app/var \
     HF_HUB_OFFLINE=1
 RUN useradd --create-home --uid 10001 sentinel
@@ -29,6 +39,7 @@ COPY app/ app/
 COPY ml/ ml/
 COPY specs/ specs/
 COPY models/active/ models/active/
+COPY --from=web /web/dist /app/web
 RUN mkdir -p /app/var && chown -R sentinel:sentinel /app/var
 USER sentinel
 EXPOSE 8000
