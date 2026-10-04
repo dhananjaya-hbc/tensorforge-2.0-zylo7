@@ -183,9 +183,12 @@ function Result({ pred, ms, busy }: { pred: Prediction; ms: number; busy: boolea
               <ArrowRight className="size-5 text-muted-foreground" />
               {pred.team}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <UrgencyBadge urgent={pred.is_urgent} />
               <ReviewBadge review={pred.needs_human_review} />
+              {pred.is_urgent && explain?.urgency_rule && (
+                <span className="text-xs font-medium text-urgent">{explain.urgency_rule} detected</span>
+              )}
             </div>
           </div>
           <ConfidenceRing value={pred.confidence} size={120} />
