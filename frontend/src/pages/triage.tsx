@@ -45,11 +45,14 @@ export default function TriagePage() {
     }
   }
 
+  // A sample only fills the form; the user reviews or edits it and presses Classify.
   const useSample = (t: Ticket) => {
     setChannel(t.channel)
     setSubject(t.subject ?? "")
     setText(t.text)
-    void run(t)
+    setResult(null)
+    textRef.current?.focus()
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   return (
