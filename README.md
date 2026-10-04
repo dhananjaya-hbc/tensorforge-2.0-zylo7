@@ -59,7 +59,8 @@ curl -X POST http://localhost:8000/batch/jobs \
 The 1.1 GB model bundle is too large for git, so it is downloaded once before building:
 
 ```bash
-MODEL_URL="<bundle link>" scripts/fetch_model.sh   # downloads + checksum-verifies models/active/
+MODEL_URL="https://drive.google.com/file/d/1mD21lT54sDkiR_xtm6ymVLFKR0i12l3W/view?usp=share_link" \
+  scripts/fetch_model.sh                          # downloads + checksum-verifies models/active/
 docker build -t sentinel .
 docker run -p 8000:8000 -e API_KEY=<key> sentinel
 ```
