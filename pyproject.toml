@@ -12,6 +12,8 @@ dependencies = [
     "scikit-learn>=1.5",
     "scipy>=1.13",
     "joblib>=1.4",
+    "onnxruntime>=1.19",
+    "tokenizers>=0.19",
 ]
 
 [dependency-groups]
