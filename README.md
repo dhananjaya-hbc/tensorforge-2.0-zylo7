@@ -9,6 +9,7 @@ with ONNX Runtime on CPU. Built for **TensorForge 2.0, Phase 2** by **Team Zylo7
 | **Live demo** | https://zylo7-sentinel.duckdns.org |
 | **API base URL** | `https://zylo7-sentinel.duckdns.org` (contract: [`specs/tensorforge-phase2-openapi-v2.yaml`](specs/tensorforge-phase2-openapi-v2.yaml)) |
 | **Container image** | `ghcr.io/dhananjaya-hbc/zylo7-sentinel:v1.0` |
+| **Model (Hugging Face)** | [huggingface.co/dhananjaya-c/sentinel](https://huggingface.co/dhananjaya-c/sentinel) |
 | **Video** | _link added at submission_ |
 | **Report** | _link added at submission_ |
 
